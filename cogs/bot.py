@@ -18,7 +18,7 @@ class Bot(commands.Cog):
         print(f"Logged in as {self.bot.user} on {len(self.bot.guilds)} servers on {default.date(time_now)}.")
 
     # Show the bot's latency
-    @commands.command(brief='Show bot latency.', description='Show bot latency.')
+    @commands.command(brief='Show the bot\'s latency.', description='Show the bot\'s latency.')
     @commands.guild_only()
     async def ping(self, ctx):
         return await ctx.send(f"**Latency:** {round(self.bot.latency * 1000)}ms")
