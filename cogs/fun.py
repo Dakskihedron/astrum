@@ -45,15 +45,10 @@ class Fun(commands.Cog):
     # Magic eight ball
     @commands.command(name='8ball', usage='[question]', brief='Seek advice or fortune-telling.', description='Seek advice or fortune-telling.')
     @commands.guild_only()
-    async def eightball(self, ctx, question):
+    async def eightball(self, ctx):
         random.shuffle(default.eightball_responses)
         answer = random.choice(default.eightball_responses)
         return await ctx.send(f"{ctx.author.mention} {answer}.")
-
-    @eightball.error
-    async def eightball_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"{ctx.author.mention} you didn't ask a question.")
 
 def setup(bot):
     bot.add_cog(Fun(bot))
