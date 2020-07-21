@@ -24,7 +24,7 @@ class Roles(commands.Cog):
         if isinstance(error, commands.CommandInvokeError):
             return await ctx.send(f"{ctx.author.mention} the name cannot exceed 100 characters.")
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send(f"{ctx.author.mention} you did not provide a name.")
+            return await ctx.send(f"{ctx.author.mention} you didn't provide a name.")
 
     # Changes the colour of the user's highest role
     @commands.command(name='rolecolour', usage='[new role colour]', brief='Changes the colour of your highest role.', description='Changes the colour of your highest role.')
@@ -42,7 +42,9 @@ class Roles(commands.Cog):
     @change_role_colour.error
     async def change_role_colour_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            return await ctx.send(f"{ctx.author.mention} you did not provide a valid six character hex code.")
+            return await ctx.send(f"{ctx.author.mention} you didn't provide a valid six character colour hex code.")
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send(f"{ctx.author.mention} you didn't provide a colour hex code")
 
 def setup(bot):
     bot.add_cog(Roles(bot))
