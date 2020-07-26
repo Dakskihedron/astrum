@@ -35,7 +35,12 @@ async def ping(ctx):
 @bot.command(brief='Show information about the bot.', description='Show information about the bot.')
 @commands.guild_only()
 async def info(ctx):
-    return await ctx.send(f">>> __**{bot.user.name}**__\nPowered by discord.py\nSource code: <{default.github_link}>")
+    embed = discord.Embed(
+        title = f'**{bot.user.name}**',
+        description = f"**Powered by discord.py.**\nBot developer: Dakskihedron.\nSource code: [GitHub]({default.github_link})"
+    )
+    embed.set_thumbnail(url=bot.user.avatar_url)
+    return await ctx.send(embed=embed)
 
 # Load extensions
 initial_extensions = (
