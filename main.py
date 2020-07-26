@@ -6,36 +6,50 @@ import dotenv
 from dotenv import load_dotenv
 load_dotenv()
 
+from datetime import datetime
+from utils import default
+
 # Get environment variables
 token = os.getenv('DISCORD_TOKEN')
 prefix = os.getenv('DISCORD_PREFIX')
 
 bot = commands.Bot(
     command_prefix = prefix,
-    help_command = commands.DefaultHelpCommand(command_attrs=dict(brief='Shows this message.'), no_category='Utility')
+    help_command = commands.DefaultHelpCommand(command_attrs=dict(brief='Shows this message.'), no_category='Bot')
 )
 
-def is_guild_owner():
-    def predicate(ctx):
-        return ctx.guild is not None and ctx.guild.owner_id == ctx.author.id
-    return commands.check(predicate)
+# Bot 'ready' event logging
+@bot.event
+async def on_ready():
+    time_now = datetime.now()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'for {bot.command_prefix}help'))
+    print(f"Logged in as {bot.user} on {len(bot.guilds)} servers on {default.date(time_now)}.")
 
-# Reload all cogs (owner only)
-@bot.command(name='reloadall', brief='Reload all cogs.', description='Reload all cogs.')
+# Show bot latency
+@bot.command(brief='Show the bot\'s latency.', description='Show the bot\'s latency.')
 @commands.guild_only()
-@commands.check_any(commands.is_owner(), is_guild_owner())
-async def reload_all(ctx):
-    for file in os.listdir('cogs'):
-        if file.endswith('.py'):
-            name = file[:-3]
-            bot.reload_extension(f'cogs.{name}')
-            print(f"Reloaded the {name} cog.")
-    return await ctx.send("Successfully reloaded all cogs.")
+async def ping(ctx):
+    return await ctx.send(f"**Latency:** {round(bot.latency * 1000)}ms")
 
-# Load extensions/cogs
-bot.load_extension('cogs.bot')
-bot.load_extension('cogs.fun')
-bot.load_extension('cogs.misc')
-bot.load_extension('cogs.roles')
+# Show information about the bot
+@bot.command(brief='Show information about the bot.', description='Show information about the bot.')
+@commands.guild_only()
+async def info(ctx):
+    return await ctx.send(f">>> __**{bot.user.name}**__\nPowered by discord.py\nSource code: <{default.github_link}>")
+
+# Load extensions
+initial_extensions = (
+    "cogs.admin",
+    "cogs.fun",
+    "cogs.misc",
+    "cogs.nsfw",
+    "cogs.roles"
+)
+
+for extension in initial_extensions:
+    try:
+        bot.load_extension(extension)
+    except Exception as e:
+        print(f"Failed to load extension {extension}.")
 
 bot.run(token)
