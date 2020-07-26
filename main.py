@@ -37,7 +37,7 @@ async def ping(ctx):
 async def info(ctx):
     embed = discord.Embed(
         title = f'**{bot.user.name}**',
-        description = f"**Powered by discord.py.**\nBot developer: Dakskihedron.\nSource code: [GitHub]({default.github_link})"
+        description = f"**Powered by discord.py.**\nBot developer: Dakskihedron\nSource code: [GitHub]({default.github_link})"
     )
     embed.set_thumbnail(url=bot.user.avatar_url)
     return await ctx.send(embed=embed)
