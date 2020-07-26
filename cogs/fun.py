@@ -11,7 +11,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     # Coinflip
-    @commands.command(brief='Flip a coin.', description='Flip a coin')
+    @commands.command(aliases=['coin'], brief='Flip a coin.', description='Flip a coin')
     @commands.guild_only()
     async def coinflip(self, ctx):
         sides = ['heads', 'tails']
@@ -19,10 +19,10 @@ class Fun(commands.Cog):
         landed_side = random.choice(sides)
         return await ctx.send(f"{ctx.author.mention} {landed_side}.")
 
-    # Decide
+    # Choose
     @commands.command(usage='[choice|choice|...]', brief='Makes a choice for you.', description='Makes a choice for you\nSeparate choices with `|`.')
     @commands.guild_only()
-    async def decide(self, ctx, *, choices : str):
+    async def choose(self, ctx, *, choices : str):
         choice_list = choices.split('|')
         random.shuffle(choice_list)
         answer = random.choice(choice_list)
@@ -33,7 +33,7 @@ class Fun(commands.Cog):
     @commands.guild_only()
     async def dice(self, ctx, number : float):
         if (number).is_integer():
-            return await ctx.send(f"{ctx.author.mention} {random.randrange(1, number)}")
+            return await ctx.send(f"{ctx.author.mention} {random.randint(1, number)}")
         else:
             return await ctx.send(f"{ctx.author.mention} the provided number must be a whole number.")
 
