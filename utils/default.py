@@ -3,7 +3,7 @@ import datetime
 
 github_link = "https://github.com/Dakskihedron/kitakami"
 
-eightball_responses = (
+eightball_responses = [
     "it is certain",
     "it is decidedly so",
     "without a doubt",
@@ -24,15 +24,15 @@ eightball_responses = (
     "my sources say no",
     "outlook is good",
     "very doubtful"  
-)
+]
 
-nsfw_blacklist = (
+nsfw_blacklist = [
     "loli",
     "lolicon",
     "shota",
     "shotacon",
     "cub"
-)
+]
 
 def date(target):
     return target.strftime("%a, %d %b %Y @ %I:%M:%S %p")
