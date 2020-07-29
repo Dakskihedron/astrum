@@ -1,4 +1,3 @@
-import discord
 import datetime
 
 github_link = "https://github.com/Dakskihedron/kitakami"
