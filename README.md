@@ -9,4 +9,10 @@ Kitakami requires the following libraries:
 - requests
 - beautifulsoup4
 
-Kitakami can be launched via pm2 with the included pm2.json script. The script requires Python 3.8. The `.env-template` file will have to be renamed to `.env` and a Discord bot token has to be provided where `[discord_bot_token]` is in order for the bot to work.
+Which can be installed using the command `pip install -r requirements.txt`.
+
+Required environment variables:
+- `DISCORD_TOKEN=[bot_token]`
+- `DISCORD_PREFIX=[prefix]`
+
+If the bot is hosted on your own machine, the environment variables will need to go in a file named `.env`, in the root folder.
