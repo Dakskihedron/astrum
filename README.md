@@ -8,11 +8,12 @@ Kitakami requires the following libraries:
 - lxml
 - requests
 - beautifulsoup4
-
-Which can be installed using the command `pip install -r requirements.txt`.
+which can be installed using the command `pip install -r requirements.txt`
 
 Required environment variables:
-- `DISCORD_TOKEN=[bot_token]`
-- `DISCORD_PREFIX=[prefix]`
+```
+DISCORD_TOKEN=[bot_token]
+DISCORD_PREFIX=[bot_prefix]
+```
 
-If the bot is hosted on your own machine, the environment variables will need to go in a file named `.env`, in the root folder.
+The bot was designed to be hosted using Heroku - just make sure to provide the environment variables in Settings/Config Vars. If you decide to host the bot on your own machine, you will need to create a file named `.env` in the root folder, and put the environment variables in it in the format shown above (minus the brackets).
