@@ -27,13 +27,11 @@ async def on_ready():
 
 # Show bot latency
 @bot.command(brief='Show the bot\'s latency.', description='Show the bot\'s latency.')
-@commands.guild_only()
 async def ping(ctx):
     return await ctx.send(f"**Latency:** {round(bot.latency * 1000)}ms")
 
 # Show information about the bot
 @bot.command(brief='Show information about the bot.', description='Show information about the bot.')
-@commands.guild_only()
 async def info(ctx):
     embed = discord.Embed(
         title = f'**{bot.user.name}**',
