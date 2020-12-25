@@ -8,7 +8,8 @@ Kitakami requires the following libraries:
 - lxml
 - requests
 - beautifulsoup4
-which can be installed using the command `pip install -r requirements.txt`
+
+which can all be installed using the command `pip install -r requirements.txt`
 
 Required environment variables:
 ```
