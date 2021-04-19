@@ -1,6 +1,6 @@
 # Kitakami
 
-Kitakami is a Discord bot written in Python and powered by discord.py. Kitakami is designed to operate in low population servers where all members are assigned their own individual customisable roles.
+Some Discord bot with role editing commands so you can stop asking your friend, the admin of the private server, to change your role name and colour for you. Besides that, there a few misc and fun commands.
 
 Kitakami requires the following libraries:
 - discord.py
@@ -11,10 +11,10 @@ Kitakami requires the following libraries:
 
 which can all be installed using the command `pip install -r requirements.txt`
 
-Required environment variables:
+Format for environment variables:
 ```
 DISCORD_TOKEN=[bot_token]
 DISCORD_PREFIX=[bot_prefix]
 ```
 
-The bot was designed to be hosted using Heroku - just make sure to provide the environment variables in Settings/Config Vars. If you decide to host the bot on your own machine, you will need to create a file named `.env` in the root folder, and put the environment variables in it in the format shown above (minus the brackets).
+The bot was designed to be hosted on Heroku - just make sure to provide the environment variables in Settings/Config Vars. However, it can also be hosted on a local machine - you will need to create a file named `.env` in the root folder and provide environment variables in the format shown above (minus the square brackets).
