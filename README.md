@@ -13,8 +13,8 @@ which can all be installed using the command `pip install -r requirements.txt`
 
 Format for environment variables:
 ```
-DISCORD_TOKEN=[bot_token]
-DISCORD_PREFIX=[bot_prefix]
+DISCORD_TOKEN=[discord_bot_token]
+BOT_PREFIX=[bot_prefix]
 ```
 
 The bot was designed to be hosted on Heroku - just make sure to provide the environment variables in Settings/Config Vars. However, it can also be hosted on a local machine - you will need to create a file named `.env` in the root folder and provide environment variables in the format shown above (minus the square brackets).

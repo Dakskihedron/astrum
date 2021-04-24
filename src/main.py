@@ -11,39 +11,29 @@ from utils import default
 
 # Get environment variables
 token = os.getenv('DISCORD_TOKEN')
-prefix = os.getenv('DISCORD_PREFIX')
+prefix = os.getenv('BOT_PREFIX')
+
+intents = discord.Intents.default()
 
 bot = commands.Bot(
+    intents = intents,
     command_prefix = prefix,
-    help_command = commands.DefaultHelpCommand(command_attrs=dict(brief='Shows this message.'), no_category='Bot')
+    activity=discord.Activity(
+        type=discord.ActivityType.watching,
+        name=f'for {prefix}help'
+    )
 )
 
-# Bot 'ready' event logging
+# On ready log
 @bot.event
 async def on_ready():
-    time_now = datetime.now()
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'for {bot.command_prefix}help'))
-    print(f"Logged in as {bot.user} on {len(bot.guilds)} servers on {default.date(time_now)}.")
+    print(f"{bot.user} logged in on {len(bot.guilds)} servers on {default.date(datetime.now())}")
 
-# Show bot latency
-@bot.command(brief='Show the bot\'s latency.', description='Show the bot\'s latency.')
-async def ping(ctx):
-    return await ctx.send(f"**Latency:** {round(bot.latency * 1000)}ms")
-
-# Show information about the bot
-@bot.command(brief='Show information about the bot.', description='Show information about the bot.')
-async def info(ctx):
-    embed = discord.Embed(
-        title = f'**{bot.user.name}**',
-        description = f"**Powered by discord.py.**\nBot developer: Dakskihedron\nSource code: [GitHub]({default.github_link})"
-    )
-    embed.set_thumbnail(url=bot.user.avatar_url)
-    return await ctx.send(embed=embed)
-
-# Load extensions
+# Load the following extensions
 initial_extensions = (
     "cogs.admin",
     "cogs.fun",
+    "cogs.info",
     "cogs.misc",
     "cogs.nsfw",
     "cogs.roles"
@@ -52,7 +42,8 @@ initial_extensions = (
 for extension in initial_extensions:
     try:
         bot.load_extension(extension)
+        print(f"Successfully loaded extension {extension}")
     except Exception as e:
-        print(f"Failed to load extension {extension}.")
+        print(f"Failed to load extension {extension}")
 
 bot.run(token)

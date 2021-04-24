@@ -4,51 +4,63 @@ from discord.ext import commands
 import random
 from utils import default
 
-"""Fun commands"""
-
 class Fun(commands.Cog):
+    """Commands that do fun stuff."""
     def __init__(self, bot):
         self.bot = bot
 
-    # Coinflip
-    @commands.command(aliases=['coin'], brief='Flip a coin.', description='Flip a coin')
+    @commands.command(aliases=['coin'])
     @commands.guild_only()
     async def coinflip(self, ctx):
-        sides = ['heads', 'tails']
-        random.shuffle(sides)
-        landed_side = random.choice(sides)
-        return await ctx.send(f"{ctx.author.mention} {landed_side}.")
+        """Flip a coin and land on heads or tails."""
+        sides = ['Heads', 'Tails']
+        side = random.choice(sides)
+        return await ctx.send(f"{side}.")
 
-    # Choose
-    @commands.command(usage='[choice|choice|...]', brief='Makes a choice for you.', description='Makes a choice for you\nSeparate choices with `|`.')
+    @commands.command(aliases=['choice', 'decision'])
     @commands.guild_only()
-    async def choose(self, ctx, *, choices : str):
+    async def choose(self, ctx, choices : str):
+        """Pick one out of multiple choices.
+
+        choices: str|str|str...
+        The choices to pick from. Separate choices with vertical bars."""
         choice_list = choices.split('|')
         random.shuffle(choice_list)
         answer = random.choice(choice_list)
-        return await ctx.send(f"{ctx.author.mention} {answer}")
+        return await ctx.send(answer)
 
-    # Dice
-    @commands.command(brief='Roll a random number.', description='Roll a random number.')
+    @choose.error
+    async def choose_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("You did not provide any choices.")
+
+    @commands.command()
     @commands.guild_only()
     async def dice(self, ctx, number : float):
+        """Roll a number between 1 and the specified number.
+
+        number: int
+        The highest number rollable. Must be a whole number."""
         if (number).is_integer():
-            return await ctx.send(f"{ctx.author.mention} {random.randint(1, number)}")
+            return await ctx.send(random.randint(1, number))
         else:
-            return await ctx.send(f"{ctx.author.mention} the provided number must be a whole number.")
+            return await ctx.send("The number must be a whole number.")
 
     @dice.error
     async def dice_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            return await ctx.send(f"{ctx.author.mention} the provided number must be larger than one.")
+            await ctx.send("The number must be larger than one.")
 
-    # Magic eight ball
-    @commands.command(name='8ball', usage='[question]', brief='Seek advice or fortune-telling.', description='Seek advice or fortune-telling.')
+    @commands.command(name='8ball')
     @commands.guild_only()
     async def eightball(self, ctx):
+        """Seek advice or fortune-telling.
+
+        question: str
+        Ask the ball a question."""
         random.shuffle(default.eightball_responses)
         answer = random.choice(default.eightball_responses)
-        return await ctx.send(f"{ctx.author.mention} {answer}.")
+        return await ctx.send(f"{answer}.")
 
 def setup(bot):
     bot.add_cog(Fun(bot))

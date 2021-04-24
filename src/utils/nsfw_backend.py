@@ -34,7 +34,7 @@ async def get_image(site: str, tags: str):
             soup = BeautifulSoup(r.text, 'lxml')
             post_count = soup.find('posts').find_all('post')
             if (site != 'danbooru' and int(soup.find('posts')['count']) == 0) or len(post_count) == 0:
-                return None, None, 'the specified tag returned no results.'
+                return None, None, 'The specified tag returned no results.'
             else:
                 post = post_count[random.randint(0, len(post_count)-1)]
                 file_url = post['file_url']
@@ -44,7 +44,7 @@ async def get_image(site: str, tags: str):
             if site == 'danbooru' and r.status_code == 422:
                 error_message = 'Danbooru searches are limited to two tags.'
             else:
-                error_message = f'couldn\'t process the request. Status code: {r.status_code} {r.reason}.'
+                error_message = f'Couldn\'t process the request. Status code: {r.status_code} {r.reason}.'
             return None, None, error_message
     except requests.exceptions.RequestException as e:
         return None, None, f'**ERROR:** {type(e).__name__} - {e}'

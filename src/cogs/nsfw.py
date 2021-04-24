@@ -2,11 +2,10 @@ import discord
 from discord.ext import commands
 
 from utils.default import nsfw_blacklist
-from core.nsfw_core import get_image
-
-"""NSFW commands"""
+from utils.nsfw_backend import get_image
 
 class NSFW(commands.Cog):
+    """Commands related to NSFW content. Only work in channels tagged as NSFW."""
     def __init__(self, bot):
         self.bot = bot
         self.image_cache = dict()
@@ -15,7 +14,7 @@ class NSFW(commands.Cog):
     async def process_nsfw(self, ctx, site: str, tags: str):
         for x in nsfw_blacklist:
             if x in tags.lower():
-                return await ctx.send(f"{ctx.author.mention} one of the tags you specified is blacklisted.")
+                return await ctx.send("One of the tags you have specified is blacklisted.")
             else:
                 file_url, post_link, error = await get_image(site, tags)
                 if file_url and post_link:
@@ -26,34 +25,44 @@ class NSFW(commands.Cog):
                     self.image_cache[ctx.author.id] = msg.id
                     return
                 elif error:
-                    return await ctx.send(f"{ctx.author.mention} {error}")
+                    return await ctx.send(error)
 
-    # Get image from Danbooru
-    @commands.command(aliases=['dan'], usage='[tag]', brief='Get an image from Danbooru with the specified tag(s).', description='Get an image from Danbooru with the specified tag(s). Multiple tags can be appended with + e.g. tag1+tag2. Note: Danbooru searches are limited to only two tags. Leave blank for random image.')
+    @commands.command(aliases=['dan'])
     @commands.is_nsfw()
     async def danbooru(self, ctx, tags: str = ''):
+        """Get a random image from Danbooru with the specified tag(s).
+        Danbooru searches are limited to two tags.
+
+        tag: str+str
+        The tag(s) you want to search. Two can be searched e.g. str+str. Leave blank for random image."""
         return await self.process_nsfw(ctx, 'danbooru', tags)
 
-    # Get image from Gelbooru
-    @commands.command(aliases=['gel'], usage='[tag]', brief='Get an image from Gelbooru with the specified tag(s).', description='Get an image from Gelbooru with the specified tag(s). Multiple tags can be appended with + e.g. tag1+tag2+tag... Leave blank for random image.')
+    @commands.command(aliases=['gel'])
     @commands.is_nsfw()
     async def gelbooru(self, ctx, tags: str = ''):
+        """Get a random image from Gelbooru with the specified tag(s).
+
+        tag: str+str+str...
+        The tag(s) you want to search. Multiple tags can be appended using plus signs e.g. str+str+str. Leave blank for random image."""
         return await self.process_nsfw(ctx, 'gelbooru', tags)
 
-    # Get image from rule34.xxx
-    @commands.command(aliases=['r34'], usage='[tag]', brief='Get an image from rule34.xxx with the specified tag(s).', description='Get an image from rule34.xxx with the specified tag(s). Multiple tags can be appended with + e.g. tag1+tag2... Leave blank for random image.')
+    @commands.command(aliases=['r34'])
     @commands.is_nsfw()
     async def rule34(self, ctx, tags: str = ''):
+        """Get a random image from rule34.xxx with the specified tag(s).
+
+        tag: str+str+str...
+        The tag(s) you want to search. Multiple tags can be appended using plus signs e.g. str+str+str. Leave blank for random image."""
         return await self.process_nsfw(ctx, 'rule34', tags)
 
-    # Deletes the recently requested image
-    @commands.command(aliases=['del', 'undo'], brief='Delete the image you recently requested.', description='Delete the image you recently requested.')
+    @commands.command(aliases=['del', 'undo'])
     @commands.is_nsfw()
     async def deletethis(self, ctx):
+        """Remove the image you recently requested."""
         try:
             msg = await ctx.channel.fetch_message(self.image_cache[ctx.author.id])
         except:
-            return await ctx.send(f"{ctx.author.mention} there is no image to delete.")
+            return await ctx.send("There is no image to delete.")
         else:
             await msg.delete()
             del self.image_cache[ctx.author.id]
@@ -63,9 +72,9 @@ class NSFW(commands.Cog):
     @gelbooru.error
     @rule34.error
     @deletethis.error
-    async def error(self, ctx, error):
+    async def nsfw_error(self, ctx, error):
         if isinstance(error, commands.NSFWChannelRequired):
-            return await ctx.send(f"{ctx.author.mention} that command requires you to be in an NSFW channel.")
+            return await ctx.send("Command can only used in a NSFW channel.")
 
 def setup(bot):
     bot.add_cog(NSFW(bot))
