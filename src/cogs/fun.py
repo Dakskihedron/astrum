@@ -19,11 +19,11 @@ class Fun(commands.Cog):
 
     @commands.command(aliases=['choice', 'decision'])
     @commands.guild_only()
-    async def choose(self, ctx, choices : str):
+    async def choose(self, ctx, choices: str):
         """Pick one out of multiple choices.
 
-        choices: str|str|str...
-        The choices to pick from. Separate choices with vertical bars."""
+        choices: str|str
+        The choices to pick from. Multiple choices can be appended. Separate all choices with vertical bars."""
         choice_list = choices.split('|')
         random.shuffle(choice_list)
         answer = random.choice(choice_list)
@@ -36,7 +36,7 @@ class Fun(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def dice(self, ctx, number : float):
+    async def dice(self, ctx, number: float):
         """Roll a number between 1 and the specified number.
 
         number: int
@@ -54,10 +54,7 @@ class Fun(commands.Cog):
     @commands.command(name='8ball')
     @commands.guild_only()
     async def eightball(self, ctx):
-        """Seek advice or fortune-telling.
-
-        question: str
-        Ask the ball a question."""
+        """Seek advice or fortune-telling."""
         random.shuffle(default.eightball_responses)
         answer = random.choice(default.eightball_responses)
         return await ctx.send(f"{answer}.")
