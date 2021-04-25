@@ -33,8 +33,8 @@ class NSFW(commands.Cog):
         """Get a random image from Danbooru with the specified tag(s).
         Danbooru searches are limited to two tags.
 
-        tag: str+str
-        The tag(s) you want to search. Two can be searched e.g. str+str. Leave blank for random image."""
+        tags: str
+        The tag(s) you want to search. Multiple tags can be appended using plus signs. Spaces in tags must be replaced with an underscore. Leave blank for a random image."""
         return await self.process_nsfw(ctx, 'danbooru', tags)
 
     @commands.command(aliases=['gel'])
@@ -42,8 +42,8 @@ class NSFW(commands.Cog):
     async def gelbooru(self, ctx, tags: str = ''):
         """Get a random image from Gelbooru with the specified tag(s).
 
-        tag: str+str+str...
-        The tag(s) you want to search. Multiple tags can be appended using plus signs e.g. str+str+str. Leave blank for random image."""
+        tags: str
+        The tag(s) you want to search. Multiple tags can be appended using plus signs. Spaces in tags must be replaced with an underscore. Leave blank for a random image."""
         return await self.process_nsfw(ctx, 'gelbooru', tags)
 
     @commands.command(aliases=['r34'])
@@ -51,8 +51,8 @@ class NSFW(commands.Cog):
     async def rule34(self, ctx, tags: str = ''):
         """Get a random image from rule34.xxx with the specified tag(s).
 
-        tag: str+str+str...
-        The tag(s) you want to search. Multiple tags can be appended using plus signs e.g. str+str+str. Leave blank for random image."""
+        tags: str
+        The tag(s) you want to search. Multiple tags can be appended using plus signs. Spaces in tags must be replaced with an underscore. Leave blank for a random image."""
         return await self.process_nsfw(ctx, 'rule34', tags)
 
     @commands.command(aliases=['del', 'undo'])
