@@ -8,7 +8,7 @@ class Roles(commands.Cog):
 
     @commands.command(name='rolename')
     @commands.guild_only()
-    async def change_role_name(self, ctx, *, new_name):
+    async def change_role_name(self, ctx, *, name: str):
         """Change the name of your highest role.
 
         name: str
@@ -18,8 +18,8 @@ class Roles(commands.Cog):
             return await ctx.send("Your role cannot be edited.")
         else:
             old_name = current_name
-            await ctx.author.top_role.edit(name = new_name)
-            return await ctx.send(f"Changed name of role from `{old_name}` to `{new_name}`.")
+            await ctx.author.top_role.edit(name = name)
+            return await ctx.send(f"Changed name of role from `{old_name}` to `{name}`")
 
     @change_role_name.error
     async def change_role_name_error(self, ctx, error):
@@ -30,7 +30,7 @@ class Roles(commands.Cog):
 
     @commands.command(name='rolecolour')
     @commands.guild_only()
-    async def change_role_colour(self, ctx, new_colour):
+    async def change_role_colour(self, ctx, colour):
         """Change the colour of your highest role.
 
         colour: hex
@@ -40,9 +40,9 @@ class Roles(commands.Cog):
             return await ctx.send("Your role cannot be edited.")
         else:
             old_colour = current_colour
-            colour = new_colour.replace('#', '')
+            colour = colour.replace('#', '')
             await ctx.author.top_role.edit(colour = discord.Colour(int(colour, 16)))
-            return await ctx.send(f"Changed colour of role from `{old_colour}` to `#{colour}`.")
+            return await ctx.send(f"Changed colour of role from `{old_colour}` to `#{colour}`")
 
     @change_role_colour.error
     async def change_role_colour_error(self, ctx, error):
