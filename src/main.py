@@ -31,7 +31,7 @@ async def on_ready():
 
 # Load the following extensions
 initial_extensions = (
-    "cogs.admin",
+    "cogs.bot_owner",
     "cogs.fun",
     "cogs.info",
     "cogs.misc",
