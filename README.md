@@ -5,9 +5,7 @@ Some Discord bot with role editing commands so you can stop asking your friend, 
 Kitakami requires the following libraries:
 - discord.py
 - python-dotenv
-- lxml
 - requests
-- beautifulsoup4
 
 which can all be installed using the command `pip install -r requirements.txt`
 
