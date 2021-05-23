@@ -13,9 +13,9 @@ class Info(commands.Cog):
     async def ping(self, ctx):
         """Show the bot's response time and latency."""
         m = await ctx.send("**Pinging...**")
-        embed = discord.Embed()
-        embed.add_field(name='Response', value=f"{(m.created_at - ctx.message.created_at).total_seconds() * 1000} ms")
-        embed.add_field(name='Latency', value=f"{self.bot.latency * 1000:.2f} ms")
+        embed = discord.Embed(colour = discord.Colour.blurple())
+        embed.add_field(name='Response', value=f"{(m.created_at - ctx.message.created_at).total_seconds() * 1000} ms", inline=False)
+        embed.add_field(name='Latency', value=f"{self.bot.latency * 1000:.2f} ms", inline=False)
         await m.edit(content=None, embed=embed)
 
     @commands.command()
