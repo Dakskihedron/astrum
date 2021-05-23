@@ -2,12 +2,14 @@ import discord
 from discord.ext import commands
 
 import textwrap
-from utils import default
 
 class Misc(commands.Cog):
     """Commands that don't go anywhere else."""
     def __init__(self, bot):
         self.bot = bot
+
+    def date(self, target):
+        return target.strftime("%a, %d %b %Y @ %I:%M:%S %p")
 
     @commands.command(name='user')
     @commands.guild_only()
@@ -33,7 +35,7 @@ class Misc(commands.Cog):
                     f"""
                     Username: {user}
                     ID: {user.id}
-                    Created: {default.date(user.created_at)}
+                    Created: {self.date(user.created_at)}
                     """
                 ).strip(),
             ),
@@ -41,7 +43,7 @@ class Misc(commands.Cog):
                 "Member Information",
                 textwrap.dedent(
                     f"""
-                    Joined: {default.date(user.joined_at)}
+                    Joined: {self.date(user.joined_at)}
                     Roles: {roles or None}
                     """
                 ).strip(),
@@ -49,7 +51,7 @@ class Misc(commands.Cog):
         ]
         for field_name, field_value in fields:
             embed.add_field(name=field_name, value=field_value, inline=False)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command(aliases=['icon'])
     @commands.guild_only()
@@ -60,13 +62,13 @@ class Misc(commands.Cog):
         The user you want to return the avatar of. Leave blank for yourself."""
         user = user or ctx.author
         avatar = user.avatar_url
-        return await ctx.send(avatar)
+        await ctx.send(avatar)
 
     @user_info.error
     @avatar.error
     async def user_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            return await ctx.reply("User could not be found.")
+            await ctx.reply("User could not be found.")
 
 def setup(bot):
     bot.add_cog(Misc(bot))

@@ -19,14 +19,14 @@ class Roles(commands.Cog):
         The name you want to change to. Cannot exceed 100 characters."""
         old_name = ctx.author.top_role.name
         await ctx.author.top_role.edit(name = name)
-        return await ctx.reply(f"Changed name of role from `{old_name}` to `{name}`")
+        await ctx.reply(f"Changed name of role from `{old_name}` to `{name}`")
 
     @change_role_name.error
     async def change_role_name_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            return await ctx.reply("The name cannot exceed 100 characters.")
+            await ctx.reply("The name cannot exceed 100 characters.")
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.reply("Missing name.")
+            await ctx.reply("Missing name.")
 
     @commands.command(name='rolecolour')
     @commands.guild_only()
@@ -39,18 +39,18 @@ class Roles(commands.Cog):
         old_colour = ctx.author.top_role.colour
         colour = colour.replace('#', '')
         await ctx.author.top_role.edit(colour = discord.Colour(int(colour, 16)))
-        return await ctx.reply(f"Changed colour of role from `{old_colour}` to `#{colour}`")
+        await ctx.reply(f"Changed colour of role from `{old_colour}` to `#{colour}`")
 
     @change_role_colour.error
     async def change_role_colour_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            return await ctx.reply("Invalid hex code.")
+            await ctx.reply("Invalid hex code.")
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.reply("Missing hex code of colour.")
+            await ctx.reply("Missing hex code of colour.")
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CheckFailure):
-            return await ctx.reply("No valid role assigned.")
+            await ctx.reply("No valid role assigned.")
 
 def setup(bot):
     bot.add_cog(Roles(bot))

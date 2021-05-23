@@ -2,12 +2,10 @@ import discord
 from discord.ext import commands
 
 import os
-import dotenv
 from dotenv import load_dotenv
 load_dotenv()
 
 from datetime import datetime
-from utils import default
 
 # Get environment variables
 token = os.getenv('DISCORD_TOKEN')
@@ -24,10 +22,13 @@ bot = commands.Bot(
     )
 )
 
+def date(target):
+    return target.strftime("%a, %d %b %Y @ %I:%M:%S %p")
+
 # On ready log
 @bot.event
 async def on_ready():
-    print(f"{bot.user} logged in on {len(bot.guilds)} servers on {default.date(datetime.now())}")
+    print(f"{bot.user} logged in on {len(bot.guilds)} servers on {date(datetime.now())}")
 
 # Load the following extensions
 initial_extensions = (
@@ -36,7 +37,6 @@ initial_extensions = (
     "cogs.fun",
     "cogs.info",
     "cogs.misc",
-    "cogs.nsfw",
     "cogs.roles"
 )
 

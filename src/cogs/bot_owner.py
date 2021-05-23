@@ -17,7 +17,7 @@ class BotOwner(commands.Cog):
         ext_list = []
         for extension in initial_extensions:
             ext_list.append(extension.replace('cogs.', ''))
-        return await ctx.send(f"```\n{nl.join(ext_list)}\n```")
+        await ctx.send(f"```\n{nl.join(ext_list)}\n```")
         
     @commands.command(name='load')
     @commands.guild_only()
@@ -31,9 +31,9 @@ class BotOwner(commands.Cog):
         try:
             self.bot.load_extension(cog)
         except Exception as e:
-            return await ctx.reply(f'{type(e).__name__}: {e}')
+            return await ctx.reply(f"{type(e).__name__}: {e}")
         else:
-            return await ctx.reply(f"Successfully loaded '{cog}'.")
+            await ctx.reply(f"Successfully loaded '{cog}'.")
 
     @commands.command(name='unload')
     @commands.guild_only()
@@ -50,9 +50,9 @@ class BotOwner(commands.Cog):
             try:
                 self.bot.unload_extension(cog)
             except Exception as e:
-                return await ctx.reply(f'{type(e).__name__}: {e}')
+                return await ctx.reply(f"{type(e).__name__}: {e}")
             else:
-                return await ctx.reply(f"Successfully unloaded '{cog}'.")
+                await ctx.reply(f"Successfully unloaded '{cog}'.")
 
     @commands.command(name='reload')
     @commands.guild_only()
@@ -66,9 +66,9 @@ class BotOwner(commands.Cog):
         try:
             self.bot.reload_extension(cog)
         except Exception as e:
-            return await ctx.reply(f'{type(e).__name__}: {e}')
+            return await ctx.reply(f"{type(e).__name__}: {e}")
         else:
-            return await ctx.reply(f"Successfully reloaded '{cog}'.")
+            await ctx.reply(f"Successfully reloaded '{cog}'.")
 
     @commands.command(name='reloadall')
     @commands.guild_only()
@@ -80,12 +80,12 @@ class BotOwner(commands.Cog):
                 self.bot.reload_extension(extension)
                 print(f"Successfully reloaded extension {extension}")
             except Exception as e:
-                return await ctx.reply(f'{type(e).__name__}: {e}')
-        return await ctx.reply("Successfully reloaded all cogs.")
+                return await ctx.reply(f"{type(e).__name__}: {e}")
+        await ctx.reply("Successfully reloaded all cogs.")
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.reply("No cog specified.")  
+            await ctx.reply("No cog specified.")  
 
 def setup(bot):
     bot.add_cog(BotOwner(bot))

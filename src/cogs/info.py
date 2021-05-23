@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 
-from utils import default
-
 class Info(commands.Cog):
     """Commands to do with information."""
     def __init__(self, bot):
@@ -22,7 +20,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     async def source(self, ctx):
         """Link to bot's source code on GitHub."""
-        return await ctx.send(default.github_link)
+        await ctx.send("https://github.com/Dakskihedron/kitakami")
 
 def setup(bot):
     bot.add_cog(Info(bot))
