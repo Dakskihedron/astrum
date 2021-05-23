@@ -21,7 +21,7 @@ class APIs(commands.Cog):
         """Show the Astronomical Picture of the Day.
 
         date: yyyy-mm-dd
-        The date for a specific picture. Leave blank for today's picture."""
+        Optional date for a specific picture. Leave blank for today's picture."""
         url = f'https://api.nasa.gov/planetary/apod?api_key={nasa_api_key}'
         if date != None:
             url = url + f'&date={date}'
@@ -52,11 +52,11 @@ class APIs(commands.Cog):
     @commands.command()
     @commands.is_nsfw()
     @commands.guild_only()
-    async def danbooru(self, ctx, tags=''):
-        """Show an image from Danbooru.
+    async def danbooru(self, ctx, *, tags=''):
+        """Show a random image from Danbooru.
 
         tag: str
-        Optional tag(s) for searching specific images."""
+        Optional tag(s) for searching specific images. Leave blank for random image."""
         blacklist = [
             "loli",
             "lolicon",
