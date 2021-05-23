@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+import textwrap
 from utils import default
 
 class Misc(commands.Cog):
@@ -8,46 +9,64 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='userinfo')
+    @commands.command(name='user')
     @commands.guild_only()
     async def user_info(self, ctx, user: discord.Member = None):
         """Show information about a user.
 
-        user: discord.Member
+        user: mention or userid
         The user you want to show information about. Leave blank for youself."""
         user = user or ctx.author
+        name = str(user)
+        if user.nick:
+            name = f'{user.nick} ({user.name})'
+        roles = ', '.join(role.mention for role in user.roles[1:])
         embed = discord.Embed(
-            title = f'**{user}**',
-            colour = user.colour
+            title = name,
+            colour = user.colour if roles else discord.Colour.blurple()
         )
         embed.set_thumbnail(url=user.avatar_url)
-        embed.add_field(name='Current display name', value=user.display_name, inline=False)
-        embed.add_field(name='Discord join date', value=default.date(user.created_at), inline=False)
-        embed.add_field(name='Server join date', value=default.date(user.joined_at), inline=False)
-        embed.add_field(name='Highest role in server', value=user.top_role.mention, inline=False)
-
+        fields = [
+            (
+                "User Information",
+                textwrap.dedent(
+                    f"""
+                    Username: {user}
+                    ID: {user.id}
+                    Created: {default.date(user.created_at)}
+                    """
+                ).strip(),
+            ),
+            (
+                "Member Information",
+                textwrap.dedent(
+                    f"""
+                    Joined: {default.date(user.joined_at)}
+                    Roles: {roles or None}
+                    """
+                ).strip(),
+            ),
+        ]
+        for field_name, field_value in fields:
+            embed.add_field(name=field_name, value=field_value, inline=False)
         return await ctx.send(embed=embed)
 
-    @user_info.error
-    async def user_info_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            return await ctx.send("User could not be found.")
-
-    @commands.command()
+    @commands.command(aliases=['icon'])
     @commands.guild_only()
     async def avatar(self, ctx, user: discord.Member = None):
         """Return a user's avatar.
 
-        user: discord.Member
+        user: mention or userid
         The user you want to return the avatar of. Leave blank for yourself."""
         user = user or ctx.author
         avatar = user.avatar_url
         return await ctx.send(avatar)
 
+    @user_info.error
     @avatar.error
-    async def avatar_error(self, ctx, error):
+    async def user_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            return await ctx.send("User could not be found.")
+            return await ctx.reply("User could not be found.")
 
 def setup(bot):
     bot.add_cog(Misc(bot))
