@@ -31,9 +31,9 @@ class BotOwner(commands.Cog):
         try:
             self.bot.load_extension(cog)
         except Exception as e:
-            return await ctx.send(f"**ERROR:** {type(e).__name__} - {e}")
+            return await ctx.reply(f'{type(e).__name__}: {e}')
         else:
-            return await ctx.send(f"**SUCCESS:** Loaded `{cog}`")
+            return await ctx.reply(f"Successfully loaded '{cog}'.")
 
     @commands.command(name='unload')
     @commands.guild_only()
@@ -45,14 +45,14 @@ class BotOwner(commands.Cog):
         The name of the cog you want to unload."""
         cog = f'cogs.{cog}'
         if cog == 'cogs.bot_owner':
-            return await ctx.send(f"**ERROR:** `cogs.bot_owner` cannot be unloaded.")
+            return await ctx.reply(f"'cogs.bot_owner' cannot be unloaded.")
         else:
             try:
                 self.bot.unload_extension(cog)
             except Exception as e:
-                return await ctx.send(f"**ERROR:** {type(e).__name__} - {e}")
+                return await ctx.reply(f'{type(e).__name__}: {e}')
             else:
-                return await ctx.send(f"**SUCCESS:** Unloaded `{cog}`")
+                return await ctx.reply(f"Successfully unloaded '{cog}'.")
 
     @commands.command(name='reload')
     @commands.guild_only()
@@ -66,16 +66,9 @@ class BotOwner(commands.Cog):
         try:
             self.bot.reload_extension(cog)
         except Exception as e:
-            return await ctx.send(f"**ERROR:** {type(e).__name__} - {e}")
+            return await ctx.reply(f'{type(e).__name__}: {e}')
         else:
-            return await ctx.send(f"**SUCCESS:** Reloaded `{cog}`")
-    
-    @load_cog.error
-    @unload_cog.error
-    @reload_cog.error
-    async def cog_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send("You did not specify a cog.")
+            return await ctx.reply(f"Successfully reloaded '{cog}'.")
 
     @commands.command(name='reloadall')
     @commands.guild_only()
@@ -87,8 +80,12 @@ class BotOwner(commands.Cog):
                 self.bot.reload_extension(extension)
                 print(f"Successfully reloaded extension {extension}")
             except Exception as e:
-                return await ctx.send(f"**ERROR:** {type(e).__name__} - {e}")
-        return await ctx.send("**Successfully reloaded all cogs.**")
+                return await ctx.reply(f'{type(e).__name__}: {e}')
+        return await ctx.reply("Successfully reloaded all cogs.")
+
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.reply("No cog specified.")  
 
 def setup(bot):
     bot.add_cog(BotOwner(bot))
