@@ -30,21 +30,18 @@ async def get_image(site: str, tags: str):
     site_url, tag_param, id_param = await get_site_params(site)
     try:
         r = requests.get(site_url + tag_param + tags.lower())
-        if r.status_code == 200:
-            soup = BeautifulSoup(r.text, 'lxml')
-            post_count = soup.find('posts').find_all('post')
-            if (site != 'danbooru' and int(soup.find('posts')['count']) == 0) or len(post_count) == 0:
-                return None, None, 'The specified tag returned no results.'
-            else:
-                post = post_count[random.randint(0, len(post_count)-1)]
-                file_url = post['file_url']
-                post_link = site_url + id_param + post['id']
-                return file_url, post_link, None
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, 'lxml')
+        post_count = soup.find('posts').find_all('post')
+        if (site != 'danbooru' and int(soup.find('posts')['count']) == 0) or len(post_count) == 0:
+            return None, None, 'The specified tag returned no results.'
         else:
-            if site == 'danbooru' and r.status_code == 422:
-                error_message = 'Danbooru searches are limited to two tags.'
-            else:
-                error_message = f'Couldn\'t process the request. Status code: {r.status_code} {r.reason}.'
-            return None, None, error_message
+            post = post_count[random.randint(0, len(post_count)-1)]
+            file_url = post['file_url']
+            post_link = site_url + id_param + post['id']
+            return file_url, post_link, None
     except requests.exceptions.RequestException as e:
-        return None, None, f'**ERROR:** {type(e).__name__} - {e}'
+        if site == 'danbooru' and r.status_code == 422:
+            return None, None, 'Cannot exceed two tags.'
+        else:
+            return None, None, e
