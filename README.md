@@ -1,6 +1,6 @@
 # Astrum
 
-Some Discord bot with role editing commands so you can stop asking your friend, the admin of the private server, to change your role name and colour for you. Besides that, there a few misc and fun commands.
+Some Discord bot with role editing commands so you can stop asking your friend, the admin of the private server, to change your role name and colour for you. Besides that, there's a few misc and fun commands.
 
 Library requirements
 - discord.py
