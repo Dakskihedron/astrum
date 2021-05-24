@@ -20,7 +20,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     async def source(self, ctx):
         """Link to bot's source code on GitHub."""
-        await ctx.send("https://github.com/Dakskihedron/kitakami")
+        await ctx.send("https://github.com/Dakskihedron/astrum")
 
 def setup(bot):
     bot.add_cog(Info(bot))
