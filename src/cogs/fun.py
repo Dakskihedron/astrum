@@ -13,8 +13,7 @@ class Fun(commands.Cog):
     async def coin_flip(self, ctx):
         """Flip a coin and land on heads or tails."""
         sides = ['Heads', 'Tails']
-        side = random.choice(sides)
-        await ctx.reply(f"{side}.")
+        await ctx.reply(f"{random.choice(sides)}.")
 
     @commands.command()
     @commands.guild_only()
@@ -23,9 +22,8 @@ class Fun(commands.Cog):
 
         choices: str, str
         The choices to pick from. List choices using commas."""
-        choice_list = choices.split(',')
-        answer = random.choice(choice_list)
-        await ctx.reply(answer)
+        choices = choices.split(',')
+        await ctx.reply(random.choice(choices))
 
     @choose.error
     async def choose_error(self, ctx, error):
@@ -75,8 +73,7 @@ class Fun(commands.Cog):
             "Outlook not so good",
             "Very doubtful"
         ]
-        answer = random.choice(responses)
-        await ctx.reply(f"{answer}.")
+        await ctx.reply(f"{random.choice(responses)}.")
 
 def setup(bot):
     bot.add_cog(Fun(bot))

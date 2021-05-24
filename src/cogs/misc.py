@@ -61,8 +61,7 @@ class Misc(commands.Cog):
         user: mention or userid
         The user you want to return the avatar of. Leave blank for yourself."""
         user = user or ctx.author
-        avatar = user.avatar_url
-        await ctx.send(avatar)
+        await ctx.send(user.avatar_url)
 
     @user_info.error
     @avatar.error
