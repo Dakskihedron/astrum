@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
 
+import aiohttp
 import os
 import random
-import requests
 import re
 
-# Get API tokens from environment variables
 nasa_api_key = os.getenv('NASA_API_KEY')
 
 class APIs(commands.Cog):
@@ -14,6 +13,18 @@ class APIs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.image_cache = dict()
+
+    async def get_data(self, url):
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as r:
+                data = await r.json()
+                try:
+                    r.raise_for_status()
+                    return data, None
+                except aiohttp.ClientResponseError as e:
+                    status = e.status
+                    return data, status
 
     @commands.command()
     @commands.guild_only()
@@ -25,10 +36,10 @@ class APIs(commands.Cog):
         url = f'https://api.nasa.gov/planetary/apod?api_key={nasa_api_key}'
         if date != None:
             url = url + f'&date={date}'
-        try:
-            r = requests.get(url)
-            r.raise_for_status()
-            data = r.json()
+        data, status = await self.get_data(url)
+        if data and status:
+            return await ctx.reply(f"{status}: {data['msg']}")
+        else:
             if data['media_type'] == 'image':
                 embed = discord.Embed(
                     title = f"{data['title']}",
@@ -36,18 +47,15 @@ class APIs(commands.Cog):
                 )
                 embed.set_image(url=data['url'])
                 if 'copyright' in data:
-                    embed.set_footer(text=f"Image Credit & Copyright: {data['copyright']}")
+                    embed.set_footer(text=f"Image Cred & Copyright: {data['copyright']}")
                 else:
                     embed.set_footer(text="Public Domain")
                 return await ctx.send(embed=embed)
-            elif data['media_type'] == 'video':
+            elif data['media_type'] == 'video' and 'youtube' in data['url']:
                 url = re.search('https://www.youtube.com/embed/(.*)?rel=0', data['url'])
                 return await ctx.send(f'https://youtu.be/{url.group(1)}')
             else:
-                return await ctx.send(data['url'])
-        except requests.exceptions.RequestException:
-            data = requests.get(url).json()
-            await ctx.reply(f"{r.status_code}: {data['msg']}")
+                await ctx.send(data['url'])
 
     @commands.command()
     @commands.is_nsfw()
@@ -71,22 +79,18 @@ class APIs(commands.Cog):
         for x in blacklist:
             if x in tags.lower():
                 return await ctx.reply("The specified tag(s) are blacklisted.")
-        else:
-            url = f'https://danbooru.donmai.us/posts.json?limit=200&tags={tags}'
-            try:
-                r = requests.get(url)
-                r.raise_for_status()
-                data = r.json()
-                if len(data) == 0:
-                    return await ctx.reply("The specified tag(s) returned no results.")
+            else:
+                url = f'https://danbooru.donmai.us/posts.json?limit=200&tags={tags}'
+                data, status = await self.get_data(url)
+                if data and status:
+                    return await ctx.reply(f"{status}: {data['message']}")
                 else:
+                    if len(data) == 0:
+                        return await ctx.reply("The specified tag(s) returned no results.")
                     post = random.choice(data)
                     msg = await ctx.send(post['file_url'])
                     self.image_cache[ctx.author.id] = msg.id
                     return
-            except requests.exceptions.RequestException:
-                data = requests.get(url).json()
-                await ctx.reply(f"{r.status_code}: {data['message']}")
 
     @commands.command()
     @commands.is_nsfw()
