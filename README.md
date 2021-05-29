@@ -2,12 +2,7 @@
 
 Some Discord bot with role editing commands so you can stop asking your friend, the admin of the private server, to change your role name and colour for you. Besides that, there's a few misc and fun commands.
 
-Library requirements
-- discord.py
-- python-dotenv
-- requests
-
-which can all be installed using the command `pip install -r requirements.txt`
+Required libraries can be installed using the command `pip install -r requirements.txt`
 
 Format for environment variables:
 ```
