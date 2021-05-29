@@ -2,14 +2,12 @@ import discord
 from discord.ext import commands
 
 import textwrap
+import cogs.utils.default as default
 
 class Misc(commands.Cog):
     """Commands that don't go anywhere else."""
     def __init__(self, bot):
         self.bot = bot
-
-    def date(self, target):
-        return target.strftime("%a, %d %b %Y @ %I:%M:%S %p")
 
     @commands.command(name='user')
     @commands.guild_only()
@@ -22,9 +20,11 @@ class Misc(commands.Cog):
         name = str(user)
         if user.nick:
             name = f'{user.nick} ({user.name})'
+        else:
+            name = user.name
         roles = ', '.join(role.mention for role in user.roles[1:])
         embed = discord.Embed(
-            title = name,
+            title = f'**{name}**',
             colour = user.colour if roles else discord.Colour.blurple()
         )
         embed.set_thumbnail(url=user.avatar_url)
@@ -35,7 +35,7 @@ class Misc(commands.Cog):
                     f"""
                     Username: {user}
                     ID: {user.id}
-                    Created: {self.date(user.created_at)}
+                    Created: {default.date(user.created_at)}
                     """
                 ).strip(),
             ),
@@ -43,7 +43,7 @@ class Misc(commands.Cog):
                 "Member Information",
                 textwrap.dedent(
                     f"""
-                    Joined: {self.date(user.joined_at)}
+                    Joined: {default.date(user.joined_at)}
                     Roles: {roles or None}
                     """
                 ).strip(),
