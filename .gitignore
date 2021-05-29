@@ -1,3 +1,12 @@
-__pycache__
+# Bot
+test.py
+
+# Environmental variables
 .env
+
+# Directories
+__pycache__
 .vscode
+
+# Logging
+discord.log
