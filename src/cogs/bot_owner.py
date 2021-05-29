@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from main import initial_extensions
+import os
 
 class BotOwner(commands.Cog):
     """Commands related to cogs. Only usable by the bot owner."""
@@ -15,8 +15,9 @@ class BotOwner(commands.Cog):
         """List all cogs."""
         nl = '\n'
         ext_list = []
-        for extension in initial_extensions:
-            ext_list.append(extension.replace('cogs.', ''))
+        for ext in os.listdir('./src/cogs'):
+            if ext.endswith('.py'):
+                ext_list.append(ext[:-3])
         await ctx.send(f"```\n{nl.join(ext_list)}\n```")
         
     @commands.command(name='load')
@@ -75,13 +76,15 @@ class BotOwner(commands.Cog):
     @commands.is_owner()
     async def reload_all_cogs(self, ctx):
         """Reload all cogs."""
-        for extension in initial_extensions:
-            try:
-                self.bot.reload_extension(extension)
-                print(f"Successfully reloaded extension {extension}")
-            except Exception as e:
-                return await ctx.reply(f"{type(e).__name__}: {e}")
-        await ctx.reply("Successfully reloaded all cogs.")
+        for ext in os.listdir('./src/cogs'):
+            if ext.endswith('.py'):
+                ext = ext[:-3]
+                try:
+                    self.bot.reload_extension(f'cogs.{ext}')
+                    await ctx.send(f"Successfully reloaded extension '{ext}'.")
+                except Exception as e:
+                    await ctx.send(f"Failed to reload extension '{ext}.'\n{type(e).__name__}: {e}")
+        await ctx.send("Job done.")
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
