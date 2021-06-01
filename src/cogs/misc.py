@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-
 import textwrap
 import cogs.utils.default as default
+
 
 class Misc(commands.Cog):
     """Commands that don't go anywhere else."""
@@ -24,8 +24,8 @@ class Misc(commands.Cog):
             name = user.name
         roles = ', '.join(role.mention for role in user.roles[1:])
         embed = discord.Embed(
-            title = f'**{name}**',
-            colour = user.colour if roles else discord.Colour.blurple()
+            title=f'**{name}**',
+            colour=user.colour if roles else discord.Colour.blurple()
         )
         embed.set_thumbnail(url=user.avatar_url)
         fields = [
@@ -68,6 +68,7 @@ class Misc(commands.Cog):
     async def user_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("User could not be found.")
+
 
 def setup(bot):
     bot.add_cog(Misc(bot))

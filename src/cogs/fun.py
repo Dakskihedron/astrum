@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-
 import random
+
 
 class Fun(commands.Cog):
     """Commands that do fun stuff."""
@@ -74,6 +74,7 @@ class Fun(commands.Cog):
             "Very doubtful"
         ]
         await ctx.reply(f"{random.choice(responses)}.")
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

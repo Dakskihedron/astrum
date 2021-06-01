@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-
 import os
+
 
 class BotOwner(commands.Cog):
     """Commands related to cogs. Only usable by the bot owner."""
@@ -19,7 +19,7 @@ class BotOwner(commands.Cog):
             if ext.endswith('.py'):
                 ext_list.append(ext[:-3])
         await ctx.send(f"```\n{nl.join(ext_list)}\n```")
-        
+
     @commands.command(name='load')
     @commands.guild_only()
     @commands.is_owner()
@@ -46,7 +46,7 @@ class BotOwner(commands.Cog):
         The name of the cog you want to unload."""
         cog = f'cogs.{cog}'
         if cog == 'cogs.bot_owner':
-            return await ctx.reply(f"'cogs.bot_owner' cannot be unloaded.")
+            return await ctx.reply("'cogs.bot_owner' cannot be unloaded.")
         else:
             try:
                 self.bot.unload_extension(cog)
@@ -88,7 +88,8 @@ class BotOwner(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply("No cog specified.")  
+            await ctx.reply("No cog specified.")
+
 
 def setup(bot):
     bot.add_cog(BotOwner(bot))

@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-
 import aiohttp
 import os
 import random
@@ -8,11 +7,12 @@ import re
 
 nasa_api_key = os.getenv('NASA_API_KEY')
 
+
 class APIs(commands.Cog):
     """Commands related to APIs."""
     def __init__(self, bot):
         self.bot = bot
-        self.image_cache = dict()
+        self.image_cache = {}
 
     async def get_data(self, url):
         timeout = aiohttp.ClientTimeout(total=10)
@@ -34,16 +34,16 @@ class APIs(commands.Cog):
         date: yyyy-mm-dd
         Optional date for a specific picture. Leave blank for today's picture."""
         url = f'https://api.nasa.gov/planetary/apod?api_key={nasa_api_key}'
-        if date != None:
-            url = url + f'&date={date}'
+        if date is not None:
+            url += f'&date={date}'
         data, status = await self.get_data(url)
         if data and status:
             return await ctx.reply(f"{status}: {data['msg']}")
         else:
             if data['media_type'] == 'image':
                 embed = discord.Embed(
-                    title = f"{data['title']}",
-                    colour = discord.Colour.blurple()
+                    title=f"{data['title']}",
+                    colour=discord.Colour.blurple()
                 )
                 embed.set_image(url=data['url'])
                 if 'copyright' in data:
@@ -97,18 +97,19 @@ class APIs(commands.Cog):
     @commands.guild_only()
     async def undo(self, ctx):
         """Remove your recently requested image."""
-        request = self.image_cache[ctx.author.id]
         try:
-            msg = await ctx.channel.fetch_message(request)
-        except:
+            request = self.image_cache[ctx.author.id]
+        except KeyError:
             return await ctx.reply("There is no image to remove.")
         else:
+            msg = await ctx.channel.fetch_message(request)
             await msg.delete()
-            del request
+            self.image_cache.pop(ctx.author.id)
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.NSFWChannelRequired):
             return await ctx.reply("Command can only be used in a NSFW channel.")
+
 
 def setup(bot):
     bot.add_cog(APIs(bot))

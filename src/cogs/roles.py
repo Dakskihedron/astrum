@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+
 class Roles(commands.Cog):
     """Commands for editing your role - assuming each member has their own custom role."""
     def __init__(self, bot):
@@ -18,7 +19,7 @@ class Roles(commands.Cog):
         name: str
         The name you want to change to. Cannot exceed 100 characters."""
         old_name = ctx.author.top_role.name
-        await ctx.author.top_role.edit(name = name)
+        await ctx.author.top_role.edit(name=name)
         await ctx.reply(f"Changed name of role from `{old_name}` to `{name}`")
 
     @change_role_name.error
@@ -38,7 +39,7 @@ class Roles(commands.Cog):
         The hexadecimal code of the colour you want to change to."""
         old_colour = ctx.author.top_role.colour
         colour = colour.replace('#', '')
-        await ctx.author.top_role.edit(colour = discord.Colour(int(colour, 16)))
+        await ctx.author.top_role.edit(colour=discord.Colour(int(colour, 16)))
         await ctx.reply(f"Changed colour of role from `{old_colour}` to `#{colour}`")
 
     @change_role_colour.error
@@ -51,6 +52,7 @@ class Roles(commands.Cog):
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CheckFailure):
             await ctx.reply("No valid role assigned.")
+
 
 def setup(bot):
     bot.add_cog(Roles(bot))
