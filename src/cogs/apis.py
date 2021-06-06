@@ -160,7 +160,8 @@ class APIs(commands.Cog):
             wind_dir = compass_dir[round((data['wind']['deg'] % 360) / 22.5)]
             embed.add_field(name="Wind Speed:", value=f"{round(data['wind']['speed'], 1)} m/s {wind_dir}")
             embed.add_field(name="Atmos Pres:", value=f"{data['main']['pressure']} hPa")
-            embed.add_field(name="Data Generated:", value=datetime.fromtimestamp(data['dt']).strftime("%#I:%M %p, %a %#d"))
+            embed.add_field(name="Min Temp", value=f"{round(data['main']['temp_min'])}\u00b0C")
+            embed.add_field(name="Max Temp", value=f"{round(data['main']['temp_max'])}\u00b0C")
             await ctx.send(embed=embed)
 
     @weather.error
