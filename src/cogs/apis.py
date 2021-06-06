@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
 import aiohttp
+from datetime import datetime
 import os
 import random
 import re
 
 nasa_api_key = os.getenv('NASA_API_KEY')
+owm_api_key = os.getenv('OWM_API_KEY')
 
 
 class APIs(commands.Cog):
@@ -25,6 +27,8 @@ class APIs(commands.Cog):
                 except aiohttp.ClientResponseError as e:
                     status = e.status
                     return data, status
+                except aiohttp.web.Exception as e:
+                    print(e)
 
     @commands.command()
     @commands.guild_only()
@@ -109,6 +113,60 @@ class APIs(commands.Cog):
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.NSFWChannelRequired):
             return await ctx.reply("Command can only be used in a NSFW channel.")
+
+    @commands.command()
+    @commands.guild_only()
+    async def weather(self, ctx, *, location):
+        """Retrieve weather data for a location from OpenWeatherMap.
+
+        location: str
+        The location you want to retrieve weather data for."""
+        url = f'https://api.openweathermap.org/data/2.5/weather?q={location}&appid={owm_api_key}&units=metric'
+        data, status = await self.get_data(url)
+        if data and status:
+            return await ctx.reply(f"{status}: {data['message']}")
+        else:
+            embed = discord.Embed(
+                title=f"{data['name']}, {data['sys']['country']}",
+                colour=discord.Colour.blurple(),
+                description=f"**{round(data['main']['temp'])}\u00b0C**\u2002{data['weather'][0]['main']}: {data['weather'][0]['description']}."
+            )
+            embed.set_thumbnail(url=f"http://openweathermap.org/img/wn/{data['weather'][0]['icon']}@2x.png")
+            if 'rain' not in data:
+                rain = '0'
+            else:
+                rain = data['rain']['1h']
+            embed.add_field(name="Precipitation:", value=f"{rain} mm")
+            embed.add_field(name="Humidity:", value=f"{data['main']['humidity']}%")
+            compass_dir = [
+                'N',
+                'NNE',
+                'NE',
+                'ENE',
+                'E',
+                'ESE',
+                'SE',
+                'SSE',
+                'S',
+                'SSW',
+                'SW',
+                'WSW',
+                'W',
+                'WNW',
+                'NW',
+                'NNW',
+                'N'
+            ]
+            wind_dir = compass_dir[round((data['wind']['deg'] % 360) / 22.5)]
+            embed.add_field(name="Wind Speed:", value=f"{round(data['wind']['speed'], 1)} m/s {wind_dir}")
+            embed.add_field(name="Atmos Pres:", value=f"{data['main']['pressure']} hPa")
+            embed.add_field(name="Data Generated:", value=datetime.fromtimestamp(data['dt']).strftime("%#I:%M %p, %a %#d"))
+            await ctx.send(embed=embed)
+
+    @weather.error
+    async def weather_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply("No location was provided.")
 
 
 def setup(bot):
