@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import aiohttp
+from datetime import datetime
 import os
 import random
 import re
@@ -169,6 +170,8 @@ class APIs(commands.Cog):
             embed.add_field(name="Atmos Pres:", value=f"{main['pressure']} hPa")
             embed.add_field(name="Min Temp:", value=f"{round(main['temp_min'])}\u00b0C")
             embed.add_field(name="Max Temp:", value=f"{round(main['temp_max'])}\u00b0C")
+            embed.add_field(name="Sunrise (UTC+12):", value=datetime.fromtimestamp(sys['sunrise']).strftime('%I:%M %p'))
+            embed.add_field(name="Sunset (UTC+12):", value=datetime.fromtimestamp(sys['sunset']).strftime('%I:%M %p'))
             await ctx.send(embed=embed)
 
     @weather.error
