@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import aiohttp
-from datetime import datetime
 import os
 import random
 import re
@@ -51,7 +50,7 @@ class APIs(commands.Cog):
                 )
                 embed.set_image(url=data['url'])
                 if 'copyright' in data:
-                    embed.set_footer(text=f"Image Cred & Copyright: {data['copyright']}")
+                    embed.set_footer(text=f"Image Credit & Copyright: {data['copyright']}")
                 else:
                     embed.set_footer(text="Public Domain")
                 return await ctx.send(embed=embed)
@@ -126,18 +125,26 @@ class APIs(commands.Cog):
         if data and status:
             return await ctx.reply(f"{status}: {data['message']}")
         else:
+            sys = data['sys']
+            weather = data['weather'][0]
+            main = data['main']
+            wind = data['wind']
+            if 'country' not in sys:
+                title = f"{data['name']}"
+            else:
+                title = f"{data['name']}, {sys['country']}"
             embed = discord.Embed(
-                title=f"{data['name']}, {data['sys']['country']}",
+                title=title,
                 colour=discord.Colour.blurple(),
-                description=f"**{round(data['main']['temp'])}\u00b0C**\u2002{data['weather'][0]['main']}: {data['weather'][0]['description']}."
+                description=f"**{round(main['temp'])}\u00b0C**\u2002{weather['main']}: {weather['description']}."
             )
-            embed.set_thumbnail(url=f"http://openweathermap.org/img/wn/{data['weather'][0]['icon']}@2x.png")
+            embed.set_thumbnail(url=f"http://openweathermap.org/img/wn/{weather['icon']}@2x.png")
             if 'rain' not in data:
                 rain = '0'
             else:
                 rain = data['rain']['1h']
             embed.add_field(name="Precipitation:", value=f"{rain} mm")
-            embed.add_field(name="Humidity:", value=f"{data['main']['humidity']}%")
+            embed.add_field(name="Humidity:", value=f"{main['humidity']}%")
             compass_dir = [
                 'N',
                 'NNE',
@@ -157,11 +164,11 @@ class APIs(commands.Cog):
                 'NNW',
                 'N'
             ]
-            wind_dir = compass_dir[round((data['wind']['deg'] % 360) / 22.5)]
-            embed.add_field(name="Wind Speed:", value=f"{round(data['wind']['speed'], 1)} m/s {wind_dir}")
-            embed.add_field(name="Atmos Pres:", value=f"{data['main']['pressure']} hPa")
-            embed.add_field(name="Min Temp:", value=f"{round(data['main']['temp_min'])}\u00b0C")
-            embed.add_field(name="Max Temp:", value=f"{round(data['main']['temp_max'])}\u00b0C")
+            wind_dir = compass_dir[round((wind['deg'] % 360) / 22.5)]
+            embed.add_field(name="Wind Speed:", value=f"{round(wind['speed'], 1)} m/s {wind_dir}")
+            embed.add_field(name="Atmos Pres:", value=f"{main['pressure']} hPa")
+            embed.add_field(name="Min Temp:", value=f"{round(main['temp_min'])}\u00b0C")
+            embed.add_field(name="Max Temp:", value=f"{round(main['temp_max'])}\u00b0C")
             await ctx.send(embed=embed)
 
     @weather.error
