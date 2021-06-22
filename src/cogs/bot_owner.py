@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 import os
 
@@ -27,7 +26,8 @@ class BotOwner(commands.Cog):
         """Load a specified cog.
 
         cog: str
-        The name of the cog you want to load."""
+        The name of the cog you want to load.
+        """
         cog = f'cogs.{cog}'
         try:
             self.bot.load_extension(cog)
@@ -43,7 +43,8 @@ class BotOwner(commands.Cog):
         """Unload a specified cog.
 
         cog: str
-        The name of the cog you want to unload."""
+        The name of the cog you want to unload.
+        """
         cog = f'cogs.{cog}'
         if cog == 'cogs.bot_owner':
             return await ctx.reply("'cogs.bot_owner' cannot be unloaded.")
@@ -62,7 +63,8 @@ class BotOwner(commands.Cog):
         """Reload a specified cog.
 
         cog: str
-        The name of the cog you want to reload."""
+        The name of the cog you want to reload.
+        """
         cog = f'cogs.{cog}'
         try:
             self.bot.reload_extension(cog)
@@ -83,7 +85,10 @@ class BotOwner(commands.Cog):
                     self.bot.reload_extension(f'cogs.{ext}')
                     await ctx.send(f"Successfully reloaded extension '{ext}'.")
                 except Exception as e:
-                    await ctx.send(f"Failed to reload extension '{ext}.'\n{type(e).__name__}: {e}")
+                    await ctx.send(
+                        f"Failed to reload extension '{ext}.' "
+                        f"{type(e).__name__}: {e}"
+                        )
         await ctx.send("Job done.")
 
     async def cog_command_error(self, ctx, error):

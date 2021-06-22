@@ -15,7 +15,8 @@ class Misc(commands.Cog):
         """Show information about a user.
 
         user: mention or userid
-        The user you want to show information about. Leave blank for youself."""
+        The user you want to show information about. Leave blank for youself.
+        """
         user = user or ctx.author
         name = str(user)
         if user.nick:
@@ -30,7 +31,7 @@ class Misc(commands.Cog):
         embed.set_thumbnail(url=user.avatar_url)
         fields = [
             (
-                "User Information",
+                'User Information',
                 textwrap.dedent(
                     f"""
                     Username: {user}
@@ -40,7 +41,7 @@ class Misc(commands.Cog):
                 ).strip(),
             ),
             (
-                "Member Information",
+                'Member Information',
                 textwrap.dedent(
                     f"""
                     Joined: {default.date(user.joined_at)}
@@ -59,7 +60,8 @@ class Misc(commands.Cog):
         """Return a user's avatar.
 
         user: mention or userid
-        The user you want to return the avatar of. Leave blank for yourself."""
+        The user you want to return the avatar of. Leave blank for yourself.
+        """
         user = user or ctx.author
         await ctx.send(user.avatar_url)
 

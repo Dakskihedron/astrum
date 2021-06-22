@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 import random
 
@@ -21,7 +20,8 @@ class Fun(commands.Cog):
         """Pick one out of multiple choices.
 
         choices: str, str
-        The choices to pick from. List choices using commas."""
+        The choices to pick from. List choices using commas.
+        """
         choices = choices.split(',')
         await ctx.reply(random.choice(choices))
 
@@ -36,7 +36,8 @@ class Fun(commands.Cog):
         """Roll a number between 1 and the specified number.
 
         number: int
-        Number of sides on the dice. Must be a whole number."""
+        Number of sides on the dice. Must be a whole number.
+        """
         if (number).is_integer():
             return await ctx.reply(random.randint(1, number))
         else:
@@ -52,26 +53,26 @@ class Fun(commands.Cog):
     async def eight_ball(self, ctx):
         """Seek advice or fortune-telling."""
         responses = [
-            "It is certain",
-            "It is decidedly so",
-            "Without a doubt",
-            "Yes - definitely",
-            "You may rely on it",
-            "As I see it, yes",
-            "Most likely",
-            "Outlook good",
-            "Yes",
-            "Signs point to yes",
-            "Reply hazy, try again",
-            "Ask again later",
-            "Better not tell you now",
-            "Cannot predict now",
-            "Concentrate and ask again",
-            "Don't count on it",
-            "My reply is no",
-            "My sources say no",
-            "Outlook not so good",
-            "Very doubtful"
+            'It is certain',
+            'It is decidedly so',
+            'Without a doubt',
+            'Yes - definitely',
+            'You may rely on it',
+            'As I see it, yes',
+            'Most likely',
+            'Outlook good',
+            'Yes',
+            'Signs point to yes',
+            'Reply hazy, try again',
+            'Ask again later',
+            'Better not tell you now',
+            'Cannot predict now',
+            'Concentrate and ask again',
+            'Don\'t count on it',
+            'My reply is no',
+            'My sources say no',
+            'Outlook not so good',
+            'Very doubtful',
         ]
         await ctx.reply(f"{random.choice(responses)}.")
 
