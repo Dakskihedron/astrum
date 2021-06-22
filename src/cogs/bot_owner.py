@@ -78,18 +78,20 @@ class BotOwner(commands.Cog):
     @commands.is_owner()
     async def reload_all_cogs(self, ctx):
         """Reload all cogs."""
+        nl = '\n'
+        log = []
         for ext in os.listdir('./src/cogs'):
             if ext.endswith('.py'):
                 ext = ext[:-3]
                 try:
                     self.bot.reload_extension(f'cogs.{ext}')
-                    await ctx.send(f"Successfully reloaded extension '{ext}'.")
+                    log.append(f"Successfully reloaded extension '{ext}'.")
                 except Exception as e:
-                    await ctx.send(
+                    log.append(
                         f"Failed to reload extension '{ext}.' "
                         f"{type(e).__name__}: {e}"
                         )
-        await ctx.send("Job done.")
+        await ctx.send(f"```\n{nl.join(log)}\n```")
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
