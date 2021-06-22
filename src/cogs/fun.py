@@ -11,7 +11,10 @@ class Fun(commands.Cog):
     @commands.guild_only()
     async def coin_flip(self, ctx):
         """Flip a coin and land on heads or tails."""
-        sides = ['Heads', 'Tails']
+        sides = [
+            'Heads',
+            'Tails',
+            ]
         await ctx.reply(f"{random.choice(sides)}.")
 
     @commands.command()
@@ -73,7 +76,7 @@ class Fun(commands.Cog):
             'My sources say no',
             'Outlook not so good',
             'Very doubtful',
-        ]
+            ]
         await ctx.reply(f"{random.choice(responses)}.")
 
 

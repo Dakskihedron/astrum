@@ -84,8 +84,8 @@ class APIs(commands.Cog):
             'child',
             'beastiality',
             'incest',
-            'rape'
-        ]
+            'rape',
+            ]
         for x in blacklist:
             if x in tags.lower():
                 return await ctx.reply("The specified tag(s) are blacklisted.")
@@ -177,7 +177,7 @@ class APIs(commands.Cog):
                 'S', 'SSW', 'SW', 'WSW',
                 'W', 'WNW', 'NW', 'NNW',
                 'N',
-            ]
+                ]
             wind_dir = compass_dir[round((wind['deg'] % 360) / 22.5)]
             embed.add_field(
                 name='Wind Speed:',
