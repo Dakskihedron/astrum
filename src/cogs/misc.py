@@ -25,7 +25,7 @@ class Misc(commands.Cog):
             name = user.name
         roles = ', '.join(role.mention for role in user.roles[1:])
         embed = discord.Embed(
-            title=f'**{name}**',
+            title=name,
             colour=user.colour if roles else discord.Colour.blurple()
         )
         embed.set_thumbnail(url=user.avatar_url)
