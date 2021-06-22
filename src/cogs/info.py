@@ -1,11 +1,28 @@
 import discord
 from discord.ext import commands
+import platform
 
 
 class Info(commands.Cog):
     """Commands to do with information."""
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    @commands.guild_only()
+    async def version(self, ctx):
+        """Show Discord.py and Python version."""
+        embed = discord.Embed(colour=discord.Colour.blurple())
+        embed.add_field(
+            name='Discord.py',
+            value=f'v{discord.__version__}',
+            inline=False
+            )
+        embed.add_field(
+            name='Python',
+            value=platform.python_version()
+            )
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -21,8 +38,8 @@ class Info(commands.Cog):
             )
         embed.add_field(
             name='Latency',
-            value=f'{self.bot.latency * 1000:.2f} ms',
-            inline=False)
+            value=f'{self.bot.latency * 1000:.2f} ms'
+            )
         await m.edit(content=None, embed=embed)
 
     @commands.command()
