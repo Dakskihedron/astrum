@@ -1,15 +1,10 @@
 # Astrum
-
-Some Discord bot with role editing commands so you can stop asking your friend, the admin of the private server, to change your role name and colour for you. Besides that, there's a few misc and fun commands.
-
-Required libraries can be installed using the command `pip install -r requirements.txt`
-
-Format for environment variables:
+Another Discord.py bot, with commands for editing individual user roles.
+## Hosting
+### Heroku
+The bot has been designed to be hosted on Heroku. Environment variables will have to be provided in Settings/Config Vars on Heroku. The required variables can be found in the `.env-template` file. The required Python runtime and libraries will be automatically installed.
+### Local Machine
+The bot can be hosted on local machine such as a Raspberry Pi. You will need to rename the `.env-template` file to `.env` and provide the environment variables. Make sure Python 3.9 or newer is installed. The required libraries can be installed using:
 ```
-DISCORD_TOKEN=[discord_bot_token]
-BOT_PREFIX=[bot_prefix]
-NASA_API_KEY=[nasa_api_key]
-OWM_API_KEY=[open_weather_map_api_key]
+pip install -U -r requirements.txt
 ```
-
-The bot was designed to be hosted on Heroku − provide environment variables in Settings/Config Vars. However, it can also be hosted on a local machine − you will need to create a file named `.env` in the root folder and provide environment variables in the format shown above (minus the square brackets).
