@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
-import aiohttp
 from datetime import datetime
 import os
 import random
 import re
+import cogs.utils.functions as functions
 
 nasa_api_key = os.getenv('NASA_API_KEY')
 owm_api_key = os.getenv('OWM_API_KEY')
@@ -15,20 +15,6 @@ class APIs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.image_cache = {}
-
-    async def get_data(self, url):
-        timeout = aiohttp.ClientTimeout(total=10)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.get(url) as r:
-                data = await r.json()
-                try:
-                    r.raise_for_status()
-                    return data, None
-                except aiohttp.ClientResponseError as e:
-                    status = e.status
-                    return data, status
-                except aiohttp.web.Exception as e:
-                    print(e)
 
     @commands.command()
     @commands.guild_only()
@@ -41,7 +27,7 @@ class APIs(commands.Cog):
         url = f'https://api.nasa.gov/planetary/apod?api_key={nasa_api_key}'
         if date is not None:
             url += f'&date={date}'
-        data, status = await self.get_data(url)
+        data, status = await functions.get_data(url)
         if data and status:
             return await ctx.reply(f"{status}: {data['msg']}")
         else:
@@ -93,7 +79,7 @@ class APIs(commands.Cog):
                 url = (
                     f'https://danbooru.donmai.us/'
                     f'posts.json?limit=200&tags={tags}')
-                data, status = await self.get_data(url)
+                data, status = await functions.get_data(url)
                 if data and status:
                     return await ctx.reply(f"{status}: {data['message']}")
                 else:
@@ -139,7 +125,7 @@ class APIs(commands.Cog):
             f'data/2.5/weather?q={location}'
             f'&appid={owm_api_key}&units=metric'
             )
-        data, status = await self.get_data(url)
+        data, status = await functions.get_data(url)
         if data and status:
             return await ctx.reply(f"{status}: {data['message']}")
         else:
