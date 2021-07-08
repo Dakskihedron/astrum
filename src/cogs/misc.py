@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import textwrap
-import cogs.utils.default as default
+import cogs.utils.functions as functions
 
 
 class Misc(commands.Cog):
@@ -36,7 +36,7 @@ class Misc(commands.Cog):
                     f"""
                     Username: {user}
                     ID: {user.id}
-                    Created: {default.date(user.created_at)}
+                    Created: {functions.date(user.created_at)}
                     """
                 ).strip(),
             ),
@@ -44,7 +44,7 @@ class Misc(commands.Cog):
                 'Member Information',
                 textwrap.dedent(
                     f"""
-                    Joined: {default.date(user.joined_at)}
+                    Joined: {functions.date(user.joined_at)}
                     Roles: {roles or None}
                     """
                 ).strip(),

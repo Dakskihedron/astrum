@@ -3,7 +3,7 @@ from discord.ext import commands
 import os
 import platform
 import logging
-import cogs.utils.default as default
+import cogs.utils.functions as functions
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -38,7 +38,7 @@ bot = commands.Bot(
 async def on_ready():
     print(
         f"{'=' * 51}\n"
-        f"Current local time: {default.date(datetime.now())}\n"
+        f"Current local time: {functions.date(datetime.now())}\n"
         f"Running Discord.py version: {discord.__version__}\n"
         f"Running Python version: {platform.python_version()}\n"
         f"Logged in as {bot.user} on {len(bot.guilds)} servers\n"
