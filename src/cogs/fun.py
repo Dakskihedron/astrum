@@ -2,14 +2,14 @@ import discord
 from discord.ext import commands
 import random
 import asyncio
-import cogs.utils.functions as functions
+import aiohttp
 
 
 class Fun(commands.Cog):
     """Commands that do fun stuff."""
     def __init__(self, bot):
         self.bot = bot
-        self.playing_list = []
+        self.playing_hangman = set()
 
     @commands.command(name='coin')
     @commands.guild_only()
@@ -47,8 +47,7 @@ class Fun(commands.Cog):
         """
         if (number).is_integer():
             return await ctx.reply(random.randint(1, number))
-        else:
-            await ctx.reply("The number must be a whole number.")
+        await ctx.reply("The number must be a whole number.")
 
     @dice.error
     async def dice_error(self, ctx, error):
@@ -87,81 +86,95 @@ class Fun(commands.Cog):
     @commands.guild_only()
     async def hangman(self, ctx):
         """Start a game of hangman."""
-        if ctx.author.id not in self.playing_list:
-            self.playing_list.append(ctx.author.id)
+        if ctx.author.id not in self.playing_hangman:
+            self.playing_hangman.add(ctx.author.id)
         else:
             return await ctx.reply("Game already running.")
-        data, status = await functions.get_data(
-            'https://random-word-api.herokuapp.com/word?number=1'
+
+        url = 'https://random-word-api.herokuapp.com/word?number=1'
+
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as r:
+                word = (await r.json())[0]
+
+        guess_count = 6
+        guess_wrong = []
+        guess_correct = list(len(word) * '_')
+        guesses = {
+            0: '8/8b/Hangman-0.png',
+            1: 'd/d6/Hangman-6.png',
+            2: '6/6b/Hangman-5.png',
+            3: '2/27/Hangman-4.png',
+            4: '9/97/Hangman-3.png',
+            5: '7/70/Hangman-2.png',
+            6: '3/30/Hangman-1.png'
+        }
+
+        embed = discord.Embed(colour=discord.Color.blurple())
+        embed.set_thumbnail(
+            url=f'https://upload.wikimedia.org/wikipedia/commons/{guesses[0]}'
             )
-        if data and status:
-            return await ctx.reply(f"{status}: {data}")
-        else:
-            word = data[0]
-        guesses = 8
-        char_list = []
-        word_guessed = list(len(word) * '_')
-        embed = discord.Embed(colour=discord.Colour.blurple())
-        embed.set_author(name=f'Guesses Left: {guesses}')
-        embed.add_field(
-            name=f"`{' '.join(word_guessed)}`",
-            value='\u200b'
-            )
-        embed.set_footer(text=f'End game with {ctx.prefix}end')
+        embed.add_field(name=f"`{' '.join(guess_correct)}`", value='\u200b')
+        embed.set_footer(text='Type end to quit game.')
         await ctx.reply(embed=embed)
 
         def check(message):
-            return message.author == ctx.message.author
+            return message.author == ctx.message.author and \
+                message.channel == ctx.channel
 
-        while guesses != 0:
+        while guess_count != 0:
             try:
-                char = await self.bot.wait_for(
-                    'message',
-                    timeout=30,
-                    check=check
+                guess = await self.bot.wait_for(
+                    'message', timeout=30, check=check
                     )
-                char = char.content.lower()
             except asyncio.TimeoutError:
-                self.playing_list.pop(self.playing_list.index(ctx.author.id))
-                return await ctx.reply(
-                    "Game timed out. "
-                    f"The word was {word}."
-                    )
-            if char == f'{ctx.prefix}end':
                 break
-            elif char in char_list or char in word_guessed:
-                await ctx.reply("Duplicate letter.")
-            elif char in word:
-                for index, x in enumerate(word):
-                    if x == char:
-                        word_guessed[index] = char
-                    embed.set_field_at(
-                        index=0,
-                        name=f"`{' '.join(word_guessed)}`",
-                        value=' '.join(char_list) or '\u200b'
-                        )
-                await ctx.reply(embed=embed)
-                if ''.join(word_guessed) == word:
-                    self.playing_list.pop(
-                        self.playing_list.index(ctx.author.id)
-                        )
-                    return await ctx.reply("You figured out the word!")
-            elif not char == f'{ctx.prefix}hangman':
-                guesses -= 1
-                if guesses == 0:
+
+            guess = guess.content.lower()
+
+            if len(guess) > 1:
+                if guess == 'end':
                     break
-                char_list.append(char)
-                embed.set_author(name=f'Guesses Left: {guesses}')
+                if guess == ctx.prefix + 'hangman':
+                    continue
+                await ctx.reply("Enter a letter.")
+                continue
+
+            if guess in guess_wrong or guess in guess_correct:
+                await ctx.reply("Duplicate letter.")
+                continue
+
+            if guess in word:
+                for index, x in enumerate(word):
+                    if x == guess:
+                        guess_correct[index] = guess
                 embed.set_field_at(
                     index=0,
-                    name=f"`{' '.join(word_guessed)}`",
-                    value=' '.join(char_list)
+                    name=f"`{' '.join(guess_correct)}`",
+                    value=' '.join(guess_wrong) or '\u200b'
                     )
                 await ctx.reply(embed=embed)
-        self.playing_list.pop(self.playing_list.index(ctx.author.id))
-        return await ctx.reply(
-            f"Game ended. The word was {word}."
-            )
+                if ''.join(guess_correct) == word:
+                    self.playing_hangman.remove(ctx.author.id)
+                    return await ctx.reply("You figured out the word!")
+            else:
+                embed.set_thumbnail(
+                    url='https://upload.wikimedia.org/wikipedia/commons/'
+                    f'{guesses[guess_count]}'
+                    )
+                guess_wrong.append(guess)
+                embed.set_field_at(
+                    index=0,
+                    name=f"`{' '.join(guess_correct)}`",
+                    value=' '.join(guess_wrong)
+                    )
+                await ctx.reply(embed=embed)
+                guess_count -= 1
+                if guess_count == 0:
+                    break
+        self.playing_hangman.remove(ctx.author.id)
+        await ctx.reply(f"Game ended. The word was {word}.")
 
 
 def setup(bot):
