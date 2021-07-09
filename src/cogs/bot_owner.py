@@ -33,8 +33,7 @@ class BotOwner(commands.Cog):
             self.bot.load_extension(cog)
         except Exception as e:
             return await ctx.reply(f"{type(e).__name__}: {e}")
-        else:
-            await ctx.reply(f"Successfully loaded '{cog}'.")
+        await ctx.reply(f"Successfully loaded '{cog}'.")
 
     @commands.command(name='unload')
     @commands.guild_only()
@@ -53,8 +52,7 @@ class BotOwner(commands.Cog):
                 self.bot.unload_extension(cog)
             except Exception as e:
                 return await ctx.reply(f"{type(e).__name__}: {e}")
-            else:
-                await ctx.reply(f"Successfully unloaded '{cog}'.")
+            await ctx.reply(f"Successfully unloaded '{cog}'.")
 
     @commands.command(name='reload')
     @commands.guild_only()
@@ -70,8 +68,7 @@ class BotOwner(commands.Cog):
             self.bot.reload_extension(cog)
         except Exception as e:
             return await ctx.reply(f"{type(e).__name__}: {e}")
-        else:
-            await ctx.reply(f"Successfully reloaded '{cog}'.")
+        await ctx.reply(f"Successfully reloaded '{cog}'.")
 
     @commands.command(name='reloadall')
     @commands.guild_only()
