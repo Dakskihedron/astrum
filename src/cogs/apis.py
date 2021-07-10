@@ -39,17 +39,22 @@ class APIs(commands.Cog):
         Optional date for a specific picture.
         """
         url = f'https://api.nasa.gov/planetary/apod?api_key={nasa_api_key}'
+
         if date is not None:
             url += f'&date={date}'
+
         data, status = await self.get_data(url)
+
         if data and status:
             return await ctx.reply(f"{status}: {data['msg']}")
+
         if data['media_type'] == 'image':
             embed = discord.Embed(
                 title=f"{data['title']}",
                 colour=discord.Colour.blurple()
             )
             embed.set_image(url=data['url'])
+
             if 'copyright' in data:
                 embed.set_footer(
                     text=f"Image Credit & Copyright: {data['copyright']}"
@@ -57,6 +62,7 @@ class APIs(commands.Cog):
             else:
                 embed.set_footer(text='Public Domain')
             return await ctx.send(embed=embed)
+
         if data['media_type'] == 'video' and 'youtube' in data['url']:
             url = re.search(
                 'https://www.youtube.com/embed/(.*)?rel=0', data['url']
@@ -71,7 +77,7 @@ class APIs(commands.Cog):
         """Show a random image from Danbooru.
 
         tag: str
-        Optional tag(s) for searching specific images.
+        Optional tag(s) for narrowing image search.
         """
         blacklist = [
             'loli',
@@ -84,6 +90,7 @@ class APIs(commands.Cog):
             'incest',
             'rape',
             ]
+
         for x in blacklist:
             if x in tags.lower():
                 return await ctx.reply("The specified tag(s) are blacklisted.")
@@ -91,12 +98,15 @@ class APIs(commands.Cog):
                 f'https://danbooru.donmai.us/'
                 f'posts.json?limit=200&tags={tags}')
             data, status = await self.get_data(url)
+
             if data and status:
                 return await ctx.reply(f"{status}: {data['message']}")
+
             if len(data) == 0:
                 return await ctx.reply(
                     "The specified tag(s) returned no results."
                     )
+
             post = random.choice(data)
             msg = await ctx.send(post['file_url'])
             self.image_cache[ctx.author.id] = msg.id
@@ -110,16 +120,10 @@ class APIs(commands.Cog):
         try:
             request = self.image_cache[ctx.author.id]
         except KeyError:
-            return await ctx.reply("There is no image to remove.")
+            return await ctx.reply("No image to remove.")
         msg = await ctx.channel.fetch_message(request)
         await msg.delete()
         self.image_cache.pop(ctx.author.id)
-
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, commands.NSFWChannelRequired):
-            return await ctx.reply(
-                "Command can only be used in a NSFW channel."
-                )
 
     @commands.command()
     @commands.guild_only()
@@ -127,7 +131,7 @@ class APIs(commands.Cog):
         """Retrieve weather data for a location from OpenWeatherMap.
 
         location: str
-        The location you want to retrieve weather data for.
+        The location to retrieve weather data for.
         """
         url = (
             f'https://api.openweathermap.org/'
@@ -135,16 +139,20 @@ class APIs(commands.Cog):
             f'&appid={owm_api_key}&units=metric'
             )
         data, status = await self.get_data(url)
+
         if data and status:
             return await ctx.reply(f"{status}: {data['message']}")
+
         sys = data['sys']
         weather = data['weather'][0]
         main = data['main']
         wind = data['wind']
+
         if 'country' not in sys:
             title = f"{data['name']}"
         else:
             title = f"{data['name']}, {sys['country']}"
+
         embed = discord.Embed(
             title=title,
             colour=discord.Colour.blurple(),
@@ -159,12 +167,15 @@ class APIs(commands.Cog):
                 f"img/wn/{weather['icon']}@2x.png"
                 )
             )
+
         if 'rain' not in data:
             rain = '0'
         else:
             rain = data['rain']['1h']
+
         embed.add_field(name='Precipitation:', value=f'{rain} mm')
         embed.add_field(name='Humidity:', value=f"{main['humidity']}%")
+
         compass_dir = [
             'N', 'NNE', 'NE', 'ENE',
             'E', 'ESE', 'SE', 'SSE',
@@ -173,6 +184,7 @@ class APIs(commands.Cog):
             'N',
             ]
         wind_dir = compass_dir[round((wind['deg'] % 360) / 22.5)]
+
         embed.add_field(
             name='Wind Speed:',
             value=f"{round(wind['speed'], 1)} m/s {wind_dir}"
@@ -200,11 +212,6 @@ class APIs(commands.Cog):
             .strftime('%I:%M %p')
             )
         await ctx.send(embed=embed)
-
-    @weather.error
-    async def weather_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply("No location was provided.")
 
 
 def setup(bot):

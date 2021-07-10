@@ -10,42 +10,34 @@ class Info(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def version(self, ctx):
-        """Show Discord.py and Python version."""
-        embed = discord.Embed(colour=discord.Colour.blurple())
-        embed.add_field(
-            name='Discord.py',
-            value=f'v{discord.__version__}',
-            inline=False
+    async def meta(self, ctx):
+        """Return technical info."""
+        embed = discord.Embed(
+            colour=discord.Colour.blurple(),
+            description=f"```\nRunning Discord.py v{discord.__version__}\n"
+            f"Running Python {platform.python_version()}\n"
+            f"Running on {len(self.bot.guilds)} server(s)\n```"
             )
-        embed.add_field(
-            name='Python',
-            value=platform.python_version()
-            )
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @commands.command()
     @commands.guild_only()
     async def ping(self, ctx):
-        """Show the bot's response time and latency."""
-        m = await ctx.send('**Pinging...**')
-        embed = discord.Embed(colour=discord.Colour.blurple())
+        """Return response time and latency."""
+        m = await ctx.send('Pinging...')
         time = m.created_at - ctx.message.created_at
-        embed.add_field(
-            name='Response',
-            value=f'{time.total_seconds() * 1000} ms',
-            inline=False
-            )
-        embed.add_field(
-            name='Latency',
-            value=f'{self.bot.latency * 1000:.2f} ms'
-            )
+        embed = discord.Embed(
+            colour=discord.Colour.blurple(),
+            description="```\n"
+            f"Response: {time.total_seconds() * 1000} ms\n"
+            f"Latency: {self.bot.latency * 1000:.2f} ms\n```"
+        )
         await m.edit(content=None, embed=embed)
 
     @commands.command()
     @commands.guild_only()
     async def source(self, ctx):
-        """Link to bot's source code on GitHub."""
+        """Return link to source code on GitHub."""
         await ctx.send("https://github.com/Dakskihedron/astrum")
 
 

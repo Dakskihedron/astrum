@@ -12,22 +12,25 @@ class Misc(commands.Cog):
     @commands.command(name='user')
     @commands.guild_only()
     async def user_info(self, ctx, user: discord.Member = None):
-        """Show information about a user.
+        """Return information about a user.
 
         user: mention or userid
-        The user you want to show information about. Leave blank for youself.
+        The user to show information about. Leave blank for youself.
         """
         user = user or ctx.author
         name = str(user)
+
         if user.nick:
             name = f'{user.nick} ({user.name})'
         else:
             name = user.name
+
         roles = ', '.join(role.mention for role in user.roles[1:])
         embed = discord.Embed(
             title=name,
             colour=user.colour if roles else discord.Colour.blurple()
         )
+
         embed.set_thumbnail(url=user.avatar_url)
         fields = [
             (
@@ -50,6 +53,7 @@ class Misc(commands.Cog):
                 ).strip(),
             ),
         ]
+
         for field_name, field_value in fields:
             embed.add_field(name=field_name, value=field_value, inline=False)
         await ctx.send(embed=embed)
@@ -60,7 +64,7 @@ class Misc(commands.Cog):
         """Return a user's avatar.
 
         user: mention or userid
-        The user you want to return the avatar of. Leave blank for yourself.
+        The user to return the avatar of. Leave blank for yourself.
         """
         user = user or ctx.author
         await ctx.send(user.avatar_url)

@@ -14,7 +14,7 @@ class Fun(commands.Cog):
     @commands.command(name='coin')
     @commands.guild_only()
     async def coin_flip(self, ctx):
-        """Flip a coin and land on heads or tails."""
+        """Heads or tails."""
         sides = [
             'Heads',
             'Tails',
@@ -24,35 +24,30 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def choose(self, ctx, *, choices: str):
-        """Pick one out of multiple choices.
+        """Randomly pick one of multiple choices.
 
-        choices: str, str
-        The choices to pick from. List choices using commas.
+        choices: list
+        List of choices to pick from. Separate choices using commas.
         """
         choices = choices.split(',')
         await ctx.reply(random.choice(choices))
 
-    @choose.error
-    async def choose_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply("You did not provide any choices.")
-
     @commands.command()
     @commands.guild_only()
     async def dice(self, ctx, number: float):
-        """Roll a number between 1 and the specified number.
+        """Random number between one and the specified number.
 
         number: int
-        Number of sides on the dice. Must be a whole number.
+        End number. Must be a whole number.
         """
         if (number).is_integer():
             return await ctx.reply(random.randint(1, number))
-        await ctx.reply("The number must be a whole number.")
+        await ctx.reply("Number must be whole number.")
 
     @dice.error
     async def dice_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            await ctx.reply("The number must be larger than one.")
+            await ctx.reply("Number must be larger than one.")
 
     @commands.command(name='8ball')
     @commands.guild_only()

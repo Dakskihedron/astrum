@@ -7,7 +7,7 @@ class BotOwner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='listcogs')
+    @commands.command(name='cogs')
     @commands.guild_only()
     @commands.is_owner()
     async def list_cogs(self, ctx):
@@ -26,14 +26,15 @@ class BotOwner(commands.Cog):
         """Load a specified cog.
 
         cog: str
-        The name of the cog you want to load.
+        The name of the cog to load.
         """
-        cog = f'cogs.{cog}'
         try:
-            self.bot.load_extension(cog)
+            self.bot.load_extension(f'cogs.{cog}')
         except Exception as e:
-            return await ctx.reply(f"{type(e).__name__}: {e}")
-        await ctx.reply(f"Successfully loaded '{cog}'.")
+            return await ctx.reply(f"```diff\n- {type(e).__name__}: {e}\n```")
+        await ctx.reply(
+            f"```diff\n+ Extension '{cog}' successfully loaded.\n```"
+            )
 
     @commands.command(name='unload')
     @commands.guild_only()
@@ -42,17 +43,22 @@ class BotOwner(commands.Cog):
         """Unload a specified cog.
 
         cog: str
-        The name of the cog you want to unload.
+        The name of the cog to unload.
         """
-        cog = f'cogs.{cog}'
-        if cog == 'cogs.bot_owner':
-            return await ctx.reply("'cogs.bot_owner' cannot be unloaded.")
+        if cog == 'bot_owner':
+            return await ctx.reply(
+                "```diff\n- Extension 'bot_owner' cannot be unloaded.\n```"
+                )
         else:
             try:
-                self.bot.unload_extension(cog)
+                self.bot.unload_extension(f'cogs.{cog}')
             except Exception as e:
-                return await ctx.reply(f"{type(e).__name__}: {e}")
-            await ctx.reply(f"Successfully unloaded '{cog}'.")
+                return await ctx.reply(
+                    f"```diff\n- {type(e).__name__}: {e}\n```"
+                    )
+            await ctx.reply(
+                f"```diff\n+ Extension '{cog}' successfully unloaded.\n```"
+                )
 
     @commands.command(name='reload')
     @commands.guild_only()
@@ -61,38 +67,35 @@ class BotOwner(commands.Cog):
         """Reload a specified cog.
 
         cog: str
-        The name of the cog you want to reload.
+        The name of the cog to reload.
         """
-        cog = f'cogs.{cog}'
         try:
-            self.bot.reload_extension(cog)
+            self.bot.reload_extension(f'cogs.{cog}')
         except Exception as e:
-            return await ctx.reply(f"{type(e).__name__}: {e}")
-        await ctx.reply(f"Successfully reloaded '{cog}'.")
+            return await ctx.reply(f"```diff\n- {type(e).__name__}: {e}\n```")
+        await ctx.reply(
+            f"```diff\n+ Extension '{cog}' successfully reloaded.\n```"
+            )
 
-    @commands.command(name='reloadall')
+    @commands.command(name='restart')
     @commands.guild_only()
     @commands.is_owner()
     async def reload_all_cogs(self, ctx):
         """Reload all cogs."""
         nl = '\n'
         log = []
-        for ext in os.listdir('./src/cogs'):
-            if ext.endswith('.py'):
-                ext = ext[:-3]
+        for cog in os.listdir('./src/cogs'):
+            if cog.endswith('.py'):
+                cog = cog[:-3]
                 try:
-                    self.bot.reload_extension(f'cogs.{ext}')
-                    log.append(f"Successfully reloaded extension '{ext}'.")
+                    self.bot.reload_extension(f'cogs.{cog}')
+                    log.append(f"+ Extension '{cog}' successfully reloaded.")
                 except Exception as e:
                     log.append(
-                        f"Failed to reload extension '{ext}.' "
+                        f"- Extension '{cog}' failed to reload. "
                         f"{type(e).__name__}: {e}"
                         )
-        await ctx.send(f"```\n{nl.join(log)}\n```")
-
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply("No cog specified.")
+        await ctx.send(f"```diff\n{nl.join(log)}\n```")
 
 
 def setup(bot):
