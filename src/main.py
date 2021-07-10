@@ -41,21 +41,21 @@ async def on_ready():
         f"Current local time: {functions.date(datetime.now())}\n"
         f"Running Discord.py version: {discord.__version__}\n"
         f"Running Python version: {platform.python_version()}\n"
-        f"Logged in as {bot.user} on {len(bot.guilds)} servers\n"
+        f"Logged in as {bot.user} on {len(bot.guilds)} server(s)\n"
         f"{'=' * 51}"
         )
 
 if __name__ == '__main__':
     print("Loading extensions...")
-    for ext in os.listdir('src/cogs'):
-        if ext.endswith('.py'):
-            ext = ext[:-3]
+    for cog in os.listdir('src/cogs'):
+        if cog.endswith('.py'):
+            cog = cog[:-3]
             try:
-                bot.load_extension(f'cogs.{ext}')
-                print(f"Successfully loaded extension '{ext}'")
+                bot.load_extension(f'cogs.{cog}')
+                print(f"Extension '{cog}' successfully load.")
             except Exception as e:
                 print(
-                    f"Failed to load extension '{ext}' "
+                    f"Extension '{cog}' failed to load. "
                     f"{type(e).__name__}: {e}"
                     )
 
