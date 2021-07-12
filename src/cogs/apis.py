@@ -68,6 +68,7 @@ class APIs(commands.Cog):
                 'https://www.youtube.com/embed/(.*)?rel=0', data['url']
                 )
             return await ctx.send(f"https://youtu.be/{url.group(1)}")
+
         await ctx.send(data['url'])
 
     @commands.command()
@@ -92,8 +93,10 @@ class APIs(commands.Cog):
             ]
 
         for x in blacklist:
+
             if x in tags.lower():
                 return await ctx.reply("The specified tag(s) are blacklisted.")
+
             url = (
                 f'https://danbooru.donmai.us/'
                 f'posts.json?limit=200&tags={tags}')
@@ -110,7 +113,6 @@ class APIs(commands.Cog):
             post = random.choice(data)
             msg = await ctx.send(post['file_url'])
             self.image_cache[ctx.author.id] = msg.id
-            return
 
     @commands.command()
     @commands.is_nsfw()
@@ -121,6 +123,7 @@ class APIs(commands.Cog):
             request = self.image_cache[ctx.author.id]
         except KeyError:
             return await ctx.reply("No image to remove.")
+
         msg = await ctx.channel.fetch_message(request)
         await msg.delete()
         self.image_cache.pop(ctx.author.id)
@@ -158,9 +161,10 @@ class APIs(commands.Cog):
             colour=discord.Colour.blurple(),
             description=(
                 f"**{round(main['temp'])}\u00b0C**"
-                f"\u2002{weather['main']}: {weather['description']}."
+                f"\u2002{weather['main']} ({weather['description']})"
                 )
             )
+
         embed.set_thumbnail(
             url=(
                 f'http://openweathermap.org/'
@@ -173,9 +177,6 @@ class APIs(commands.Cog):
         else:
             rain = data['rain']['1h']
 
-        embed.add_field(name='Precipitation:', value=f'{rain} mm')
-        embed.add_field(name='Humidity:', value=f"{main['humidity']}%")
-
         compass_dir = [
             'N', 'NNE', 'NE', 'ENE',
             'E', 'ESE', 'SE', 'SSE',
@@ -186,31 +187,36 @@ class APIs(commands.Cog):
         wind_dir = compass_dir[round((wind['deg'] % 360) / 22.5)]
 
         embed.add_field(
-            name='Wind Speed:',
-            value=f"{round(wind['speed'], 1)} m/s {wind_dir}"
-            )
+            name='Temperatures',
+            value=f"""
+            Min Temp: {round(main['temp_min'])}\u00b0C
+            Max Temp: {round(main['temp_max'])}\u00b0C
+            """,
+            inline=False
+        )
+
         embed.add_field(
-            name='Atmos Pres:',
-            value=f"{main['pressure']} hPa"
-            )
+            name='Atmospherics',
+            value=f"""
+            Percipitation: {rain} mm
+            Humidity: {main['humidity']}%
+            Wind Speed: {round(wind['speed'], 1)} m/s {wind_dir}
+            Atmos Pres: {main['pressure']} hPa
+            """,
+            inline=False
+        )
+
         embed.add_field(
-            name='Min Temp:',
-            value=f"{round(main['temp_min'])}\u00b0C"
-            )
-        embed.add_field(
-            name='Max Temp:',
-            value=f"{round(main['temp_max'])}\u00b0C"
-            )
-        embed.add_field(
-            name='Sunrise (UTC+12):',
-            value=datetime.fromtimestamp(sys['sunrise'])
-            .strftime('%I:%M %p')
-            )
-        embed.add_field(
-            name='Sunset (UTC+12):',
-            value=datetime.fromtimestamp(sys['sunset'])
-            .strftime('%I:%M %p')
-            )
+            name='Times',
+            value=f"""
+            Sunrise: {datetime.fromtimestamp(sys['sunrise'])
+            .strftime('%I:%M %p')}
+            Sunset: {datetime.fromtimestamp(sys['sunset'])
+            .strftime('%I:%M %p')}
+            """,
+            inline=False
+        )
+
         await ctx.send(embed=embed)
 
 

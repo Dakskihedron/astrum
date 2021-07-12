@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import textwrap
 import cogs.utils.functions as functions
 
 
@@ -26,36 +25,33 @@ class Misc(commands.Cog):
             name = user.name
 
         roles = ', '.join(role.mention for role in user.roles[1:])
+
         embed = discord.Embed(
             title=name,
             colour=user.colour if roles else discord.Colour.blurple()
         )
 
         embed.set_thumbnail(url=user.avatar_url)
-        fields = [
-            (
-                'User Information',
-                textwrap.dedent(
-                    f"""
-                    Username: {user}
-                    ID: {user.id}
-                    Created: {functions.date(user.created_at)}
-                    """
-                ).strip(),
-            ),
-            (
-                'Member Information',
-                textwrap.dedent(
-                    f"""
-                    Joined: {functions.date(user.joined_at)}
-                    Roles: {roles or None}
-                    """
-                ).strip(),
-            ),
-        ]
 
-        for field_name, field_value in fields:
-            embed.add_field(name=field_name, value=field_value, inline=False)
+        embed.add_field(
+            name='User Information',
+            value=f"""
+            Username: {user}
+            ID: {user.id}
+            Created: {functions.date(user.created_at)}
+            """,
+            inline=False
+        )
+
+        embed.add_field(
+            name='Member Information',
+            value=f"""
+            Joined: {functions.date(user.joined_at)}
+            Roles: {roles or None}
+            """,
+            inline=False
+        )
+
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['icon'])
