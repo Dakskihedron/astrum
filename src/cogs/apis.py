@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 import aiohttp
+import json
 import os
 import random
 import re
@@ -15,6 +16,7 @@ class APIs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.image_cache = {}
+        self.config = None
 
     async def get_data(self, url):
         timeout = aiohttp.ClientTimeout(total=10)
@@ -29,6 +31,24 @@ class APIs(commands.Cog):
                 return data, status
             except aiohttp.web.Exception as e:
                 print(e)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("Loading config file...")
+        try:
+            with open('././config.json') as config:
+                self.config = json.load(config)
+            print("Config file successfully loaded.")
+            if 'blacklist' in self.config:
+                print("Danbooru blacklist found.")
+            else:
+                raise FileNotFoundError()
+        except FileNotFoundError:
+            print(
+                "Config file or Danbooru blacklist missing. "
+                "Disabling 'danbooru' command."
+                )
+            self.bot.remove_command('danbooru')
 
     @commands.command()
     @commands.guild_only()
@@ -80,39 +100,27 @@ class APIs(commands.Cog):
         tag: str
         Optional tag(s) for narrowing image search.
         """
-        blacklist = [
-            'loli',
-            'lolicon',
-            'shota',
-            'shotacon',
-            'cub',
-            'child',
-            'beastiality',
-            'incest',
-            'rape',
-            ]
 
-        for x in blacklist:
-
-            if x in tags.lower():
+        for tag in self.config['blacklist']:
+            if tag in tags.lower():
                 return await ctx.reply("The specified tag(s) are blacklisted.")
 
-            url = (
-                f'https://danbooru.donmai.us/'
-                f'posts.json?limit=200&tags={tags}')
-            data, status = await self.get_data(url)
+        url = (
+            f'https://danbooru.donmai.us/'
+            f'posts.json?limit=200&tags={tags}')
+        data, status = await self.get_data(url)
 
-            if data and status:
-                return await ctx.reply(f"{status}: {data['message']}")
+        if data and status:
+            return await ctx.reply(f"{status}: {data['message']}")
 
-            if len(data) == 0:
-                return await ctx.reply(
-                    "The specified tag(s) returned no results."
-                    )
+        if len(data) == 0:
+            return await ctx.reply(
+                "The specified tag(s) returned no results."
+                )
 
-            post = random.choice(data)
-            msg = await ctx.send(post['file_url'])
-            self.image_cache[ctx.author.id] = msg.id
+        post = random.choice(data)
+        msg = await ctx.send(post['file_url'])
+        self.image_cache[ctx.author.id] = msg.id
 
     @commands.command()
     @commands.is_nsfw()
