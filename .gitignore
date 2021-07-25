@@ -1,6 +1,9 @@
 # Bot
 test.py
 
+# Config
+config.json
+
 # Environmental variables
 .env
 

@@ -8,3 +8,15 @@ The bot can be hosted on local machine such as a Raspberry Pi. You will need to 
 ```
 pip install -U -r requirements.txt
 ```
+## Additional Info
+For the Danbooru API command, you will need to create a JSON file: `config.json` in the main directory, of which contains a key: `blacklist` with an array of blacklisted search tags for Danbooru. Otherwise the command will be disabled. An example of the JSON is shown below:
+```
+{
+    "blacklist": [
+        "list",
+        "of",
+        "blacklisted",
+        "tags"
+    ]
+}
+```
