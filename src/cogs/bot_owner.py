@@ -13,11 +13,11 @@ class BotOwner(commands.Cog):
     async def list_cogs(self, ctx):
         """List all cogs."""
         nl = '\n'
-        ext_list = []
-        for ext in os.listdir('./src/cogs'):
-            if ext.endswith('.py'):
-                ext_list.append(ext[:-3])
-        await ctx.send(f"```\n{nl.join(ext_list)}\n```")
+        cogs_list = [
+            ext[:-3] for ext in os.listdir('./src/cogs')
+            if ext.endswith('.py')
+        ]
+        await ctx.send(f"```\n{nl.join(cogs_list)}\n```")
 
     @commands.command(name='load')
     @commands.guild_only()
