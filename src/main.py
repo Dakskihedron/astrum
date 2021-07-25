@@ -52,7 +52,7 @@ if __name__ == '__main__':
             cog = cog[:-3]
             try:
                 bot.load_extension(f'cogs.{cog}')
-                print(f"Extension '{cog}' successfully load.")
+                print(f"Extension '{cog}' successfully loaded.")
             except Exception as e:
                 print(
                     f"Extension '{cog}' failed to load. "
